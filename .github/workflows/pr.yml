@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - java-framework/**
+      - stacks/java-selenium-testng/**
       - scenarios/**
       - tools/**
       - docs/**
@@ -14,7 +14,7 @@ on:
     branches:
       - master
     paths:
-      - java-framework/**
+      - stacks/java-selenium-testng/**
       - scenarios/**
       - tools/**
       - docs/**
@@ -54,7 +54,7 @@ jobs:
 
       - name: Run Java suite
         run: >-
-          mvn -B -f java-framework/pom.xml -P CLI_Parameters clean test
+          mvn -B -f stacks/java-selenium-testng/pom.xml -P CLI_Parameters clean test
           -DsuiteXmlFile=src/test/resources/regression.xml
           -Dbrowser=chrome
           -DbrowserVersion=
@@ -70,5 +70,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: surefire-xml
-          path: java-framework/target/surefire-reports/**/*.xml
+          path: stacks/java-selenium-testng/target/surefire-reports/**/*.xml
           if-no-files-found: warn
