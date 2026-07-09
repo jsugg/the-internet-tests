@@ -216,7 +216,7 @@
                             <parallel>tests</parallel>
                             <threadCount>4</threadCount>
                             <systemPropertyVariables>
-                                <theInternetWebsite.baseUrl>http://0.0.0.0:7080</theInternetWebsite.baseUrl>
+                                <theInternetWebsite.baseUrl>http://localhost:7080</theInternetWebsite.baseUrl>
                                 <theInternetWebsite.baseUrlSG>http://192.168.65.2:7080</theInternetWebsite.baseUrlSG>
                                 <theInternetWebsite.seleniumGridUrl>http://0.0.0.0:4444/wd/hub</theInternetWebsite.seleniumGridUrl>
                                 <theInternetWebsite.useSeleniumGrid>false</theInternetWebsite.useSeleniumGrid>
@@ -265,7 +265,7 @@
                             <parallel>tests</parallel>
                             <threadCount>4</threadCount>
                             <systemPropertyVariables>
-                                <theInternetWebsite.baseUrl>http://0.0.0.0:7080</theInternetWebsite.baseUrl>
+                                <theInternetWebsite.baseUrl>http://localhost:7080</theInternetWebsite.baseUrl>
                                 <theInternetWebsite.baseUrlSG>http://192.168.65.2:7080</theInternetWebsite.baseUrlSG>
                                 <theInternetWebsite.seleniumGridUrl>http://0.0.0.0:4444/wd/hub</theInternetWebsite.seleniumGridUrl>
                                 <theInternetWebsite.useSeleniumGrid>true</theInternetWebsite.useSeleniumGrid>
