@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - stacks/java-selenium-testng/**
+      - stacks/ts-playwright/**
       - scenarios/**
       - tools/**
       - docs/**
@@ -15,6 +16,7 @@ on:
       - master
     paths:
       - stacks/java-selenium-testng/**
+      - stacks/ts-playwright/**
       - scenarios/**
       - tools/**
       - docs/**
@@ -72,3 +74,57 @@ jobs:
           name: surefire-xml
           path: stacks/java-selenium-testng/target/surefire-reports/**/*.xml
           if-no-files-found: warn
+
+  ts-smoke:
+    name: TypeScript Playwright smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    services:
+      website:
+        image: gprestes/the-internet:latest
+        ports:
+          - 7080:5000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: stacks/ts-playwright/package-lock.json
+
+      - name: Install TypeScript stack dependencies
+        working-directory: stacks/ts-playwright
+        run: npm ci
+
+      - name: Install Chromium browser
+        working-directory: stacks/ts-playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Type-check TypeScript stack
+        working-directory: stacks/ts-playwright
+        run: npm run typecheck
+
+      - name: Lint TypeScript stack
+        working-directory: stacks/ts-playwright
+        run: npm run lint
+
+      - name: Run TypeScript Chromium smoke
+        working-directory: stacks/ts-playwright
+        env:
+          THE_INTERNET_BASE_URL: http://localhost:7080
+        run: npm run test:chromium:smoke
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ts-playwright-artifacts
+          path: |
+            stacks/ts-playwright/playwright-report/
+            stacks/ts-playwright/test-results/
+          if-no-files-found: ignore
