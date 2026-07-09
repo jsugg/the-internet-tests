@@ -65,3 +65,6 @@ hs_err_pid*
 
 # ENV files
 *.ENV
+
+.local/
+.serena/
