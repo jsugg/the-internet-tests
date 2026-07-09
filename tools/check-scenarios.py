@@ -5,7 +5,7 @@ import argparse, re, sys
 from pathlib import Path
 
 CATALOG = Path("scenarios/catalog.yml")
-JAVA = Path("java-framework/src/test/java/theinternetwebsite/ui/testcases")
+JAVA = Path("stacks/java-selenium-testng/src/test/java/theinternetwebsite/ui/testcases")
 MATRIX = Path("docs/scenario-matrix.md")
 STACKS = ("java-selenium-testng", "ts-playwright", "python-playwright")
 
