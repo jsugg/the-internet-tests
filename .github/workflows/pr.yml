@@ -49,7 +49,7 @@ jobs:
           -DbrowserVersion=
           -DheadlessBrowser=true
           -DuseSeleniumGrid=false
-          -DtestsThreadCount=4
+          -DtestsThreadCount=1
           -DwebAppAddress=http://localhost:7080
           -DtestRunnerAddress=http://localhost:7080
           -DseleniumGridAddress=http://localhost:4444/wd/hub
