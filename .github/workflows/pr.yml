@@ -1,0 +1,63 @@
+name: PR
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - java-framework/**
+      - .github/workflows/pr.yml
+  push:
+    branches:
+      - master
+    paths:
+      - java-framework/**
+      - .github/workflows/pr.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  java-suite:
+    name: Java Selenium suite
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    services:
+      website:
+        image: gprestes/the-internet:latest
+        ports:
+          - 7080:5000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Run Java suite
+        run: >-
+          mvn -B -f java-framework/pom.xml -P CLI_Parameters clean test
+          -DsuiteXmlFile=src/test/resources/regression.xml
+          -Dbrowser=chrome
+          -DbrowserVersion=
+          -DheadlessBrowser=true
+          -DuseSeleniumGrid=false
+          -DtestsThreadCount=4
+          -DwebAppAddress=http://localhost:7080
+          -DtestRunnerAddress=http://localhost:7080
+          -DseleniumGridAddress=http://localhost:4444/wd/hub
+
+      - name: Upload Surefire XML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-xml
+          path: java-framework/target/surefire-reports/**/*.xml
+          if-no-files-found: warn
