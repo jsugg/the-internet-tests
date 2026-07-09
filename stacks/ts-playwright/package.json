@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format:check": "prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:chromium:smoke": "playwright test --project=chromium --grep @smoke"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
