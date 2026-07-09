@@ -8,18 +8,20 @@
 
 ## Overview
 
-This repository is an educational automation playbook for [The Internet](https://the-internet.herokuapp.com/). The Java Selenium/TestNG suite is the current implemented stack. TypeScript Playwright and Python Playwright suites are on the roadmap so the same scenarios can be compared across frameworks.
+This repository is an educational automation playbook for [The Internet](https://the-internet.herokuapp.com/). The Java Selenium/TestNG suite is the full current stack, and the TypeScript Playwright stack now covers its first shared smoke scenario. Python Playwright remains on the roadmap so the same scenarios can be compared across frameworks.
 
 ## Stacks
 
 - `stacks/java-selenium-testng/`: Java 25 + Maven + Selenium + TestNG implementation.
-- TypeScript Playwright: roadmap.
+- `stacks/ts-playwright/`: TypeScript + Playwright implementation, currently seeded with `UI-LOGIN-001`.
 - Python Playwright: roadmap.
 
 ## Prerequisites
 
 - Java 25 LTS
 - Maven 3.9 or newer
+- Node.js 22.13 or newer
+- npm
 - Docker
 - Chrome or Chromium for local browser execution
 
@@ -44,7 +46,7 @@ Stop the app when finished:
 docker stop the-internet
 ```
 
-See [`stacks/java-selenium-testng/README.md`](stacks/java-selenium-testng/README.md) for Java stack details and the legacy runner notes.
+See [`stacks/java-selenium-testng/README.md`](stacks/java-selenium-testng/README.md) for Java stack details and the legacy runner notes. See [`stacks/ts-playwright/README.md`](stacks/ts-playwright/README.md) for TypeScript stack commands.
 
 ## Contributing
 
