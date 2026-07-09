@@ -6,12 +6,18 @@ on:
       - master
     paths:
       - java-framework/**
+      - scenarios/**
+      - tools/**
+      - docs/**
       - .github/workflows/pr.yml
   push:
     branches:
       - master
     paths:
       - java-framework/**
+      - scenarios/**
+      - tools/**
+      - docs/**
       - .github/workflows/pr.yml
   workflow_dispatch:
 
@@ -40,6 +46,11 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
+
+      - name: Check scenario catalog
+        run: |
+          python3 tools/check-scenarios.py --write-matrix
+          git diff --exit-code docs/scenario-matrix.md
 
       - name: Run Java suite
         run: >-
