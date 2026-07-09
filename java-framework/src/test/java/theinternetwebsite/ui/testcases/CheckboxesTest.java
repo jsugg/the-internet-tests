@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CheckboxesTest extends UITest {
 
-    @Test(description = "Checkboxes can be checked and unchecked")
+    @Test(description = "Checkboxes can be checked and unchecked", testName="UI-CHECKBOX-001")
     public void testCheckboxChecking() {
         try {
             CheckboxesPage checkboxesPage = new CheckboxesPage(this);

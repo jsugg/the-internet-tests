@@ -20,7 +20,7 @@ public class DropdownTest extends UITest {
         Assert.assertTrue(dropdownPage.isPageOpen(), "Page not open");
     }
 
-    @Test(description="Dropdown options can be selected")
+    @Test(description="Dropdown options can be selected", testName="UI-DROPDOWN-001")
     public void selectAllOptions() {
         List<String> options = dropdownPage.getDropdownOptions();
 

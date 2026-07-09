@@ -22,7 +22,7 @@ public class LoginTest extends UITest {
     public LoginTest() {}
 
     @Parameters({"username", "password"})
-    @Test(description="Login form - Using valid Credentials", groups={ "loginForm" })
+    @Test(description="Login form - Using valid Credentials", groups={ "loginForm" }, testName="UI-LOGIN-001")
     public void successfulLogin(@Optional(DEFAULT_USERNAME) String username, @Optional(DEFAULT_PASSWORD) String password) {
         LoginFormPage loginFormPage = new LoginFormPage(this);
 
@@ -37,7 +37,7 @@ public class LoginTest extends UITest {
     }
 
     @Parameters({"username", "password"})
-    @Test(description="Login form - Using invalid Username", groups={ "loginForm" })
+    @Test(description="Login form - Using invalid Username", groups={ "loginForm" }, testName="UI-LOGIN-002")
     public void invalidUsername(@Optional(DEFAULT_USERNAME) String ignoredUsername, @Optional(DEFAULT_PASSWORD) String password) {
         String expectedUserErrorMessage = "Your username is invalid!";
         LoginFormPage loginFormPage = this.login("invalidUsername", password);
@@ -51,7 +51,7 @@ public class LoginTest extends UITest {
     }
 
     @Parameters({"username", "password"})
-    @Test(description="Login form - Using invalid Password", groups={ "loginForm" })
+    @Test(description="Login form - Using invalid Password", groups={ "loginForm" }, testName="UI-LOGIN-003")
     public void invalidPassword(@Optional(DEFAULT_USERNAME) String username, @Optional(DEFAULT_PASSWORD) String ignoredPassword) {
         String expectedPasswordErrorMessage = "Your password is invalid!";
         LoginFormPage loginFormPage = this.login(username, "invalidPassword");

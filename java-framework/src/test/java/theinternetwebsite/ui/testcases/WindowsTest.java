@@ -9,7 +9,7 @@ public class WindowsTest extends UITest {
 
     public WindowsTest() { }
 
-    @Test(description = "Click on link; see a new tab with the expected message")
+    @Test(description = "Click on link; see a new tab with the expected message", testName="UI-WINDOWS-001")
     public void validateNewTab() {
         WindowsPage windowsPage = new WindowsPage(this);
         // Validate page loaded

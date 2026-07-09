@@ -17,7 +17,7 @@ public class DynamicLoadingTest extends UITest {
         dynamicLoadingPage = new DynamicLoadingPage(this);
     }
 
-    @Test(description="Start button loads a message")
+    @Test(description="Start button loads a message", testName="UI-DYNLOAD-001")
     public void loadMessage() {
         String expectedMessage = "Hello World!";
         String actualMessage;

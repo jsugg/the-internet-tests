@@ -9,7 +9,7 @@ public class UploadTest extends UITest {
 
     public UploadTest() { }
 
-    @Test(description = "Upload a file")
+    @Test(description = "Upload a file", testName="UI-UPLOAD-001")
     public void fileUpload() {
         UploadPage uploadPage = new UploadPage(this);
 

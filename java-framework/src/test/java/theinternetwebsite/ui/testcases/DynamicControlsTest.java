@@ -15,7 +15,7 @@ public class DynamicControlsTest extends UITest {
         dynamicControlsPage = new DynamicControlsPage(this);
     }
 
-    @Test(description="Removes and adds a checkbox")
+    @Test(description="Removes and adds a checkbox", testName="UI-DYNCTRL-001")
     public void checkboxTest() {
         try {
             int testAttempts = 3;
@@ -58,7 +58,7 @@ public class DynamicControlsTest extends UITest {
         }
     }
 
-    @Test(description = "Toggles the checkbox on and off")
+    @Test(description = "Toggles the checkbox on and off", testName="UI-DYNCTRL-002")
     public void toggleCheckbox() {
         try {
             // Validate page loaded
@@ -76,7 +76,7 @@ public class DynamicControlsTest extends UITest {
         }
     }
 
-    @Test(description = "Enables and disables the textbox")
+    @Test(description = "Enables and disables the textbox", testName="UI-DYNCTRL-003")
     public void textboxTest() {
         try {
             // Validate page loaded

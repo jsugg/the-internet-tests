@@ -10,7 +10,7 @@ public class IFrameTest extends UITest {
 
     public IFrameTest() { }
 
-    @Test(description = "Switches between contexts and performs operations")
+    @Test(description = "Switches between contexts and performs operations", testName="UI-IFRAME-001")
     public void testContextSwitching() {
         IFramePage iFramePage = new IFramePage(this);
         String textBucket = "Test in progress...Your content goes here.Your content goes here.", aux;
