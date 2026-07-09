@@ -7,6 +7,9 @@ import org.testng.annotations.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.testng.annotations.Parameters;
 import theinternetwebsite.ui.pageobjects.LoginFormPage;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
 
 public class LoginTest extends UITest {
 
@@ -28,6 +31,8 @@ public class LoginTest extends UITest {
 
         // Validate login succeeded
         this.login(username, password);
+        new WebDriverWait(this.getDriver(), Duration.ofSeconds(10))
+                .until(ExpectedConditions.urlToBe(loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL));
         Assert.assertEquals(this.getDriver().getCurrentUrl(), loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL);
     }
 
@@ -37,8 +42,8 @@ public class LoginTest extends UITest {
         String expectedUserErrorMessage = "Your username is invalid!";
         LoginFormPage loginFormPage = this.login("invalidUsername", password);
 
-        // Validate page loaded
-        Assert.assertTrue(loginFormPage.isPageOpen(), "Page not open");
+        new WebDriverWait(this.getDriver(), Duration.ofSeconds(10))
+                .until(ExpectedConditions.urlToBe(this.getBaseUrl() + "/login"));
 
         // Validate login failed due to invalid username
         Assert.assertNotEquals(this.getDriver().getCurrentUrl(), loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL);
@@ -51,8 +56,8 @@ public class LoginTest extends UITest {
         String expectedPasswordErrorMessage = "Your password is invalid!";
         LoginFormPage loginFormPage = this.login(username, "invalidPassword");
 
-        // Validate page loaded
-        Assert.assertTrue(loginFormPage.isPageOpen(), "Page not open");
+        new WebDriverWait(this.getDriver(), Duration.ofSeconds(10))
+                .until(ExpectedConditions.urlToBe(this.getBaseUrl() + "/login"));
 
         // Validate login failed due to invalid password
         Assert.assertNotEquals(this.getDriver().getCurrentUrl(), loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL);
