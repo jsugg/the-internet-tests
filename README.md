@@ -1,6 +1,6 @@
 # The Internet Tests
 
-[![Dev code test & PR to staging](https://github.com/jsugg/the-internet-tests/actions/workflows/java-framework-test-and-merge.yml/badge.svg?branch=develop)](https://github.com/jsugg/the-internet-tests/actions/workflows/java-framework-test-and-merge.yml)
+[![PR](https://github.com/jsugg/the-internet-tests/actions/workflows/pr.yml/badge.svg?branch=master)](https://github.com/jsugg/the-internet-tests/actions/workflows/pr.yml)
 ![GitHub last commit](https://img.shields.io/github/last-commit/jsugg/the-internet-tests)
 ![GitHub issues](https://img.shields.io/github/issues/jsugg/the-internet-tests)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/jsugg/the-internet-tests)
@@ -8,53 +8,48 @@
 
 ## Overview
 
-This repository serves as a comprehensive guide and example set for different test automation frameworks. It aims to provide the same test suite across multiple frameworks for educational purposes.
+This repository is an educational automation playbook for [The Internet](https://the-internet.herokuapp.com/). The Java Selenium/TestNG suite is the current implemented stack. TypeScript Playwright and Python Playwright suites are on the roadmap so the same scenarios can be compared across frameworks.
 
-## Features
+## Stacks
 
-- Java + TestNG + Selenium
-- NodeJS + Jest + Playwright (WIP)
+- `java-framework/`: Java 25 + Maven + Selenium + TestNG implementation.
+- TypeScript Playwright: roadmap.
+- Python Playwright: roadmap.
 
-## Directory Structure
+## Prerequisites
 
-- `.github/`: GitHub actions and dependabot configurations
-- `java-framework/`: Java + TestNG + Selenium implementation
-  - `src/test/java/theinternetwebsite/ui/`: UI tests
-  - `src/test/java/theinternetwebsite/ui/pageobjects/`: Page object models
-  - `src/test/resources/`: Test resources
+- Java 25 LTS
+- Maven 3.9 or newer
+- Docker
+- Chrome or Chromium for local browser execution
 
-## Getting Started
+## Run the Java suite
 
-### Prerequisites
+Start the demo app:
 
-- Java 8 or higher
-
-### Installation
-
-1. Clone the repository
 ```bash
-git clone https://github.com/jsugg/the-internet-tests.git
+docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:latest
 ```
-2. Navigate to the java-framework directory
-```bash
-cd the-internet-tests/java-framework
-```
-3. Install dependencies
-```bash
-mvn install
-```
-### Running Tests
-Execute the following command to run the tests:
+
+Run the tests:
 
 ```bash
+cd java-framework
 mvn test
 ```
 
+Stop the app when finished:
+
+```bash
+docker stop the-internet
+```
+
+See [`java-framework/README.md`](java-framework/README.md) for Java stack details and the legacy runner notes.
+
 ## Contributing
-Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+
+Open pull requests against `master` and include the verification commands you ran. Keep changes focused on one stack or scenario at a time.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
 
-## Acknowledgments
-[The Internet](https://the-internet.herokuapp.com/) for providing the platform for these tests.
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
