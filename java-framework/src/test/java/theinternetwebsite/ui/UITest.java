@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,7 +25,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import static io.github.bonigarcia.wdm.WebDriverManager.chromedriver;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
 
 public class UITest {
@@ -104,27 +102,20 @@ public class UITest {
         capabilities.setCapability("se:timeZone", "US/Pacific");
         capabilities.setCapability("se:screenResolution", "1920x1080");
 
-        WebDriverManager.chromedriver().cachePath("~/.m2/repository/webdriver");
-        //WebDriverManager.chromedriver().browserVersionDetectionCommand(" ");
-        WebDriverManager.chromedriver().driverVersion("100.0");
         // Use headless only on local runs. When using selenium grid, download fails in Chrome because of a bug.
         if (headless.equals("true") && useSeleniumGrid.equals("false")) {
             chromeOptions.addArguments("--headless", "--window-size=1920,1200", "--no-sandbox"); }
 
         // Remote driver session
         if (useSeleniumGrid.equals("true") || browser.equals("remote-chrome")) {
-            //WebDriverManager.chromedriver().useBetaVersions();
-            WebDriverManager.chromedriver().dockerNetwork("theinternet");
-
             try {
-                this.driver = (RemoteWebDriver) WebDriverManager.chromedriver().remoteAddress(new URL(remoteUrl)).capabilities(capabilities).create();
+                this.driver = new RemoteWebDriver(new URL(remoteUrl), capabilities);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
             this.driver.setFileDetector(new LocalFileDetector());
             return driver;
         } else {
-            chromedriver().setup();
             return new ChromeDriver(chromeOptions);
         }
     }
