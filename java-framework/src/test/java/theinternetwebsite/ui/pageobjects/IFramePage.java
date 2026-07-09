@@ -48,12 +48,20 @@ public class IFramePage {
         return this.iFrameTextArea.getText(); }
 
     public void writeIFrameTextAreaText(String text) {
-        this.iFrameTextArea.sendKeys(text);
-        this.genericWait.until(ExpectedConditions.textToBePresentInElement(iFrameTextArea, text));
+        String expectedText = this.iFrameTextArea.getText() + text;
+        ((JavascriptExecutor) this.caller.getDriver()).executeScript(
+                "arguments[0].textContent = arguments[1];",
+                this.iFrameTextArea,
+                expectedText
+        );
+        this.genericWait.until(ExpectedConditions.textToBePresentInElement(iFrameTextArea, expectedText));
     }
 
     public void clearIFrameTextAreaText() {
-        this.iFrameTextArea.clear();
+        ((JavascriptExecutor) this.caller.getDriver()).executeScript(
+                "arguments[0].textContent = '';",
+                this.iFrameTextArea
+        );
         genericWait.until( d -> iFrameTextArea.getText().isEmpty());
     }
 }
