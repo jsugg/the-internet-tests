@@ -12,7 +12,7 @@ This repository is an educational automation playbook for [The Internet](https:/
 
 ## Stacks
 
-- `java-framework/`: Java 25 + Maven + Selenium + TestNG implementation.
+- `stacks/java-selenium-testng/`: Java 25 + Maven + Selenium + TestNG implementation.
 - TypeScript Playwright: roadmap.
 - Python Playwright: roadmap.
 
@@ -34,7 +34,7 @@ docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:latest
 Run the tests:
 
 ```bash
-cd java-framework
+cd stacks/java-selenium-testng
 mvn test
 ```
 
@@ -44,7 +44,7 @@ Stop the app when finished:
 docker stop the-internet
 ```
 
-See [`java-framework/README.md`](java-framework/README.md) for Java stack details and the legacy runner notes.
+See [`stacks/java-selenium-testng/README.md`](stacks/java-selenium-testng/README.md) for Java stack details and the legacy runner notes.
 
 ## Contributing
 

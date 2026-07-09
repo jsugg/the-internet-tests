@@ -10,7 +10,7 @@ target/
 *.iws
 *.iml
 *.ipr
-java-framework/.run
+stacks/java-selenium-testng/.run
 
 ### Eclipse ###
 .apt_generated
