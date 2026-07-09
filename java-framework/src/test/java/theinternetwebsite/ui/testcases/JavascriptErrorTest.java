@@ -9,7 +9,7 @@ public class JavascriptErrorTest extends UITest {
 
     public JavascriptErrorTest() { }
 
-    @Test(description = "We see the page with the right error message")
+    @Test(description = "We see the page with the right error message", testName="UI-JSERROR-001")
     public void validateErrorMessage() {
         JavascriptErrorPage javascriptErrorPage = new JavascriptErrorPage(this);
 

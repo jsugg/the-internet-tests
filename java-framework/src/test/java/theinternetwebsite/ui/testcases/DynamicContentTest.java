@@ -23,7 +23,7 @@ public class DynamicContentTest extends UITest {
         Assert.assertTrue(dynamicContentPage.isPageOpen(), "Page not open");
     }
 
-    @Test(description="Loads new texts and images on each page refresh")
+    @Test(description="Loads new texts and images on each page refresh", testName="UI-DYNCONTENT-001")
     public void loadNewContent() {
         HashMap<String, String> content, newContent;
         int testAttempts = 5;
@@ -41,7 +41,7 @@ public class DynamicContentTest extends UITest {
         }
     }
 
-    @Test(description="Loads partially new content (text and images) on each page refresh")
+    @Test(description="Loads partially new content (text and images) on each page refresh", testName="UI-DYNCONTENT-002")
     public void loadPartiallyNewContent() {
         HashMap<String, String> content, newContent;
         int attempts = 10;

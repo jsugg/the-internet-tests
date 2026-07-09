@@ -11,7 +11,7 @@ public class DownloadTest extends UITest {
 
     public DownloadTest() {}
 
-    @Test(description = "Downloads a file and compares it with what's expected")
+    @Test(description = "Downloads a file and compares it with what's expected", testName="UI-DOWNLOAD-001")
     public void fileDownload() {
 /*        if (this.getCurrentBrowser().equals("remote-chrome")) {
             throw new SkipException("Skipping this test case; Github Actions doesn't support it yet");

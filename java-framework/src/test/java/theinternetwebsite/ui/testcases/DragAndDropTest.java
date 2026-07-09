@@ -29,7 +29,7 @@ public class DragAndDropTest extends UITest {
         }
     }
 
-    @Test(description="Drags box A over box B")
+    @Test(description="Drags box A over box B", testName="UI-DRAGDROP-001")
     public void dragLeftToRight() {
 
         // Drag left box over right box
@@ -40,7 +40,7 @@ public class DragAndDropTest extends UITest {
         Assert.assertEquals(dragAndDropPage.getBoxLetter("boxTwo"), boxOneLetter);
     }
 
-    @Test(description="Drags box B over box A")
+    @Test(description="Drags box B over box A", testName="UI-DRAGDROP-002")
     public void dragRightToLeft() {
 
         // Drag left box over right box
@@ -51,7 +51,7 @@ public class DragAndDropTest extends UITest {
         Assert.assertEquals(dragAndDropPage.getBoxLetter("boxTwo"), boxOneLetter);
     }
 
-    @Test(description="Drags box A over box B, then box B over box A")
+    @Test(description="Drags box A over box B, then box B over box A", testName="UI-DRAGDROP-003")
     public void dragBothWays() {
 
         // Drag left box over right box

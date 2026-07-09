@@ -9,7 +9,7 @@ public class NotificationMessageRenderedTest extends UITest {
 
     public NotificationMessageRenderedTest() { }
 
-    @Test(description="Validates messages shown inside the flash box")
+    @Test(description="Validates messages shown inside the flash box", testName="UI-NOTIFY-001")
     public void validateFlashMessages() {
         NotificationMessageRenderedPage notificationMessageRenderedPage = new NotificationMessageRenderedPage(this);
 
