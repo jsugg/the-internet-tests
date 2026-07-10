@@ -19,6 +19,7 @@ public class DownloadTest extends UITest {
 
         // Validate page loaded
         DownloadPage downloadPage = new DownloadPage(this);
+        downloadPage.open();
         Assert.assertTrue(downloadPage.isPageOpen(), "Page not open");
 
         // Validate file download success

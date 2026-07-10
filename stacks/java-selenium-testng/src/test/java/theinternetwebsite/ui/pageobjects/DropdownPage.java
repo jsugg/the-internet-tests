@@ -1,52 +1,48 @@
-// DropdownPage.java
 package theinternetwebsite.ui.pageobjects;
 
-import theinternetwebsite.ui.UITest;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.Select;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.Select;
+import theinternetwebsite.ui.UITest;
 
-public class DropdownPage {
+public class DropdownPage extends BasePage {
     @FindBy(css = "h3")
-    public WebElement pageTitle;
-    @FindBy(tagName = "select")
-    public WebElement dropdown;
-    private final UITest caller;
-    private final Select dropdwn;
-    List<WebElement> dropdownOptions;
-    private final String pageUrl;
+    private WebElement pageTitle;
 
-    public DropdownPage(UITest caller) {
-        this.caller = caller;
-        this.pageUrl = this.caller.getBaseUrl() + "/dropdown";
-        try {
-            this.caller.getDriver().get(this.pageUrl);
-            PageFactory.initElements(this.caller.getDriver(), this);
-            this.caller.pageFactoryInitWait(pageTitle);
-            this.dropdwn = new Select(this.dropdown);
-            this.dropdownOptions = this.dropdwn.getOptions();
-        } catch (NoSuchElementException e) {
-            throw new RuntimeException("Could not initialize the DropdownPage: " + e.getMessage());
-        }
+    @FindBy(tagName = "select")
+    private WebElement dropdown;
+
+    public DropdownPage(@NotNull UITest caller) {
+        super(caller, "/dropdown");
     }
 
-    public Boolean isPageOpen() { return this.caller.isPageOpen(this.pageUrl, this.pageTitle); }
+    @Override
+    protected @NotNull WebElement pageTitle() {
+        return pageTitle;
+    }
 
     public List<String> getDropdownOptions() {
-        List<String> dropdwnOptions = new ArrayList<>();
-        for (WebElement webElement : this.dropdownOptions) {
-            if (webElement.getAttribute("disabled") == null) dropdwnOptions.add(webElement.getText());
+        List<String> dropdownOptions = new ArrayList<>();
+        for (WebElement webElement : dropdownSelect().getOptions()) {
+            if (webElement.getAttribute("disabled") == null) {
+                dropdownOptions.add(webElement.getText());
+            }
         }
-        return dropdwnOptions;
+        return dropdownOptions;
     }
 
     public void setDropdownOption(String option) {
-        this.dropdwn.selectByVisibleText(option);
+        dropdownSelect().selectByVisibleText(option);
     }
 
-    public Boolean isDropdownOptionSelected(String option) { return this.dropdwn.getFirstSelectedOption().getText().equals(option); }
+    public boolean isDropdownOptionSelected(String option) {
+        return dropdownSelect().getFirstSelectedOption().getText().equals(option);
+    }
+
+    private Select dropdownSelect() {
+        return new Select(this.dropdown);
+    }
 }

@@ -16,17 +16,14 @@ public class DragAndDropTest extends UITest {
 
     @BeforeMethod
     public void setup() {
-        try {
-            dragAndDropPage = new DragAndDropPage(this);
-            // Validate page loaded
-            Assert.assertTrue(dragAndDropPage.isPageOpen(), "Page not open");
+        dragAndDropPage = new DragAndDropPage(this);
+        dragAndDropPage.open();
+        // Validate page loaded
+        Assert.assertTrue(dragAndDropPage.isPageOpen(), "Page not open");
 
-            // Validate initial settings
-            Assert.assertEquals(dragAndDropPage.getBoxLetter("boxOne"), boxOneLetter);
-            Assert.assertEquals(dragAndDropPage.getBoxLetter("boxTwo"), boxTwoLetter);
-        } catch (Exception e) {
-            Assert.fail("An error occurred during setup: " + e.getMessage());
-        }
+        // Validate initial settings
+        Assert.assertEquals(dragAndDropPage.getBoxLetter("boxOne"), boxOneLetter);
+        Assert.assertEquals(dragAndDropPage.getBoxLetter("boxTwo"), boxTwoLetter);
     }
 
     @Test(description="Drags box A over box B", testName="UI-DRAGDROP-001")

@@ -12,6 +12,7 @@ public class WindowsTest extends UITest {
     @Test(description = "Click on link; see a new tab with the expected message", testName="UI-WINDOWS-001")
     public void validateNewTab() {
         WindowsPage windowsPage = new WindowsPage(this);
+        windowsPage.open();
         // Validate page loaded
         Assert.assertTrue(windowsPage.isPageOpen(), "Page not open");
         // Validate expected message in new tab

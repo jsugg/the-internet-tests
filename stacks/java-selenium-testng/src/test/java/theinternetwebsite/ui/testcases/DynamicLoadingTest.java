@@ -15,6 +15,7 @@ public class DynamicLoadingTest extends UITest {
     @BeforeMethod
     public void setUp() {
         dynamicLoadingPage = new DynamicLoadingPage(this);
+        dynamicLoadingPage.open();
     }
 
     @Test(description="Start button loads a message", testName="UI-DYNLOAD-001")

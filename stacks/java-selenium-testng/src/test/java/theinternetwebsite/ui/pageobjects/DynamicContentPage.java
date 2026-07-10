@@ -1,56 +1,52 @@
 package theinternetwebsite.ui.pageobjects;
 
-import theinternetwebsite.ui.UITest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
-import org.openqa.selenium.support.PageFactory;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import theinternetwebsite.ui.UITest;
 
-public class DynamicContentPage {
-
+public class DynamicContentPage extends BasePage {
     @FindBy(how = How.XPATH, using = "//h3[normalize-space()='Dynamic Content']")
-    public WebElement pageTitle;
+    private WebElement pageTitle;
     @FindBy(how = How.CSS, using = "[href][text()='click here']")
-    public WebElement clickHereLink;
+    private WebElement clickHereLink;
     @FindBy(how = How.CSS, using = ".large-10.columns")
-    public WebElement dynamicText;
+    private WebElement dynamicText;
     @FindBy(how = How.CSS, using = ".large-2.columns")
-    public WebElement dynamicImages;
-    private final UITest caller;
-    private final String pageUrl;
+    private WebElement dynamicImages;
 
-    public DynamicContentPage (UITest caller) {
-        this.caller = caller;
-        this.pageUrl = this.caller.getBaseUrl() + "/dynamic_content";
-        this.caller.getDriver().get(this.pageUrl);
-        PageFactory.initElements(this.caller.getDriver(), this);
-        this.caller.pageFactoryInitWait(pageTitle);
+    public DynamicContentPage(@NotNull UITest caller) {
+        super(caller, "/dynamic_content");
     }
 
-    public Boolean isPageOpen() { return this.caller.isPageOpen(this.pageUrl, this.pageTitle); }
+    @Override
+    protected @NotNull WebElement pageTitle() {
+        return pageTitle;
+    }
 
-    public void reloadPage() { UITest.reloadPage(caller.getDriver()); }
+    public void reloadPage() {
+        UITest.reloadPage(driver());
+        waitUntilOpen();
+    }
 
     public HashMap<String, String> getContent(@NotNull Boolean partial) {
-        if (partial.equals(false)) caller.getDriver().get(this.pageUrl);
         String staticContentQueryString = "?with_content=static";
-        if (partial.equals(true)) caller.getDriver().get(this.pageUrl + staticContentQueryString);
+        driver().get(Boolean.TRUE.equals(partial) ? pageUrl() + staticContentQueryString : pageUrl());
+        waitUntilOpen();
 
-        List<WebElement> rawImages = caller.getDriver().findElements(By.xpath("(//*[@class='large-2 columns'])"));
-        List<WebElement> rawTexts = caller.getDriver().findElements(By.xpath("(//*[@class='large-10 columns'])"));
+        List<WebElement> rawImages = driver().findElements(By.xpath("(//*[@class='large-2 columns'])"));
+        List<WebElement> rawTexts = driver().findElements(By.xpath("(//*[@class='large-10 columns'])"));
         List<String> tempList = new ArrayList<>();
-        HashMap<String, String> content = new HashMap<String, String>();
+        HashMap<String, String> content = new HashMap<>();
 
-        // Get the images
         for (WebElement image : rawImages) {
             tempList.add(image.findElement(By.tagName("img")).getAttribute("src"));
         }
-        // Get the text and build the hashmap
         int index = 0;
         for (WebElement text : rawTexts) {
             content.put(tempList.get(index), text.getText());

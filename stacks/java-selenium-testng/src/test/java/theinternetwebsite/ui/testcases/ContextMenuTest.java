@@ -17,6 +17,7 @@ public class ContextMenuTest extends UITest {
         }
 
         ContextMenuPage contextMenuPage = new ContextMenuPage(this);
+        contextMenuPage.open();
 
         // Validate page loaded
         Assert.assertTrue(contextMenuPage.isPageOpen(), "Page not open");

@@ -13,6 +13,7 @@ public class FloatingMenuTest extends UITest {
     @BeforeMethod
     public void setUp() {
         this.floatingMenuPage = new FloatingMenuPage(this);
+        this.floatingMenuPage.open();
     }
 
     @Test(description = "Scrolls down the page and the menu is still there", testName="UI-FLOATING-001")
