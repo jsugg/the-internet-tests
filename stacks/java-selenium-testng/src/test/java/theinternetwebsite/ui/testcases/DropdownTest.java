@@ -17,6 +17,7 @@ public class DropdownTest extends UITest {
     @BeforeMethod
     public void setup() {
         dropdownPage = new DropdownPage(this);
+        dropdownPage.open();
         Assert.assertTrue(dropdownPage.isPageOpen(), "Page not open");
     }
 

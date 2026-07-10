@@ -1,73 +1,60 @@
 package theinternetwebsite.ui.pageobjects;
 
-import theinternetwebsite.ui.UITest;
+import java.time.Duration;
+import java.util.ArrayList;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import java.time.Duration;
-import java.util.ArrayList;
+import theinternetwebsite.ui.UITest;
 
-public class NotificationMessageRenderedPage {
-
+public class NotificationMessageRenderedPage extends BasePage {
     @FindBy(how = How.XPATH, using = "//h3[normalize-space()='Notification Message']")
-    public WebElement pageTitle;
+    private WebElement pageTitle;
     @FindBy(how = How.XPATH, using = "//a[normalize-space()='Click here']")
-    public WebElement link;
+    private WebElement link;
     @FindBy(how = How.XPATH, using = "//div[@id='flash']")
-    public WebElement flashNotification;
-    public ArrayList<String> possibleMessages = new ArrayList<>();
-    private final UITest caller;
-    private final String pageUrl;
+    private WebElement flashNotification;
 
-    public NotificationMessageRenderedPage(UITest caller) {
-        this.caller = caller;
-        this.pageUrl = this.caller.getBaseUrl() + "/notification_message_rendered";
-        this.caller.getDriver().get(this.pageUrl);
+    private final ArrayList<String> possibleMessages = new ArrayList<>();
+
+    public NotificationMessageRenderedPage(@NotNull UITest caller) {
+        super(caller, "/notification_message_rendered");
         this.possibleMessages.add("Action unsuccesful, please try again");
         this.possibleMessages.add("Action successful");
-        // Deactivated, because it never showed up on the website: bug?
-        //---> this.possibleMessages.add("Action Unsuccessful");
-        PageFactory.initElements(this.caller.getDriver(), this);
-        this.caller.pageFactoryInitWait(pageTitle);
     }
 
-    public Boolean isPageOpen() { return this.caller.isPageOpen(this.pageUrl, this.pageTitle); }
+    @Override
+    protected @NotNull WebElement pageTitle() {
+        return pageTitle;
+    }
 
     public void clickOnLink() {
-        Actions builder = new Actions(caller.getDriver());
-        builder.moveToElement(this.link).click(this.link).perform();
+        new Actions(driver()).moveToElement(this.link).click(this.link).perform();
     }
-
-    public ArrayList<String> getPossibleMessages(){
-        return this.possibleMessages; }
 
     public String getFlashMessage() {
-        String newMessage;
-        WebDriverWait wait = new WebDriverWait(caller.getDriver(), Duration.ofSeconds(30));
         this.clickOnLink();
-        newMessage = UITest.cleanTextContent(flashNotification.getText().trim());
-        wait.until(ExpectedConditions.visibilityOf(flashNotification));
-        return newMessage;
+        waitFor(Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOf(flashNotification));
+        return UITest.cleanTextContent(flashNotification.getText().trim());
     }
 
-    public Boolean validateFlashMessages() {
-        WebDriverWait wait = new WebDriverWait(caller.getDriver(), Duration.ofSeconds(30));
+    public boolean validateFlashMessages() {
         String currentMessage = this.getFlashMessage();
         this.clickOnLink();
-        int retries = this.getPossibleMessages().size();
+        int retries = this.possibleMessages.size();
 
         while (retries > 0) {
-            for (String message : this.getPossibleMessages()) {
+            for (String message : this.possibleMessages) {
                 if (message.trim().contains(currentMessage.trim())) {
-                    retries--; }
+                    retries--;
+                }
             }
             currentMessage = this.getFlashMessage();
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='flash']")));
+            waitFor(Duration.ofSeconds(30)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='flash']")));
         }
         return true;
     }

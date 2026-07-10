@@ -1,46 +1,33 @@
 package theinternetwebsite.ui.pageobjects;
 
-import theinternetwebsite.ui.UITest;
-import org.openqa.selenium.NoSuchElementException;
+import java.time.Duration;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import java.time.Duration;
+import theinternetwebsite.ui.UITest;
 
-public class DynamicLoadingPage {
-
+public class DynamicLoadingPage extends BasePage {
     @FindBy(how = How.XPATH, using = "//h3[normalize-space()='Dynamically Loaded Page Elements']")
-    public WebElement pageTitle;
+    private WebElement pageTitle;
     @FindBy(how = How.XPATH, using = "//button[text()= 'Start']")
-    public WebElement startButton;
+    private WebElement startButton;
     @FindBy(how = How.XPATH, using = "//*[@id='finish']")
-    public WebElement successMessage;
-    private final UITest caller;
-    private final String pageUrl;
+    private WebElement successMessage;
 
-    public DynamicLoadingPage(UITest caller) {
-        this.caller = caller;
-        this.pageUrl = this.caller.getBaseUrl() + "/dynamic_loading/2";
-        this.caller.getDriver().get(this.pageUrl);
-        PageFactory.initElements(this.caller.getDriver(), this);
-        this.caller.pageFactoryInitWait(pageTitle);
+    public DynamicLoadingPage(@NotNull UITest caller) {
+        super(caller, "/dynamic_loading/2");
     }
 
-    public Boolean isPageOpen() {
-        try {
-            return this.caller.isPageOpen(this.pageUrl, this.pageTitle);
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+    @Override
+    protected @NotNull WebElement pageTitle() {
+        return pageTitle;
     }
 
     public void startMessageRequest() {
-        WebDriverWait wait = new WebDriverWait(caller.getDriver(), Duration.ofSeconds(30));
         startButton.click();
-        wait.until(ExpectedConditions.visibilityOf(successMessage));
+        waitFor(Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOf(successMessage));
     }
 
     public String getSuccessMessage() {

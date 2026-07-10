@@ -1,54 +1,50 @@
 package theinternetwebsite.ui.pageobjects;
 
-import theinternetwebsite.ui.UITest;
+import java.time.Duration;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import java.time.Duration;
-import static org.openqa.selenium.support.ui.ExpectedConditions.*;
+import theinternetwebsite.ui.UITest;
 
-public class WindowsPage {
+import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
+import static org.openqa.selenium.support.ui.ExpectedConditions.titleIs;
 
+public class WindowsPage extends BasePage {
     @FindBy(how = How.XPATH, using = "//h3[normalize-space()='Opening a new window']")
-    public WebElement pageTitle;
+    private WebElement pageTitle;
     @FindBy(how = How.XPATH, using = "//a[normalize-space()='Click Here']")
-    public WebElement link;
+    private WebElement link;
     @FindBy(how = How.XPATH, using = "//h3[normalize-space()='New Window']")
-    public WebElement newTab;
-    private final UITest caller;
-    private final String pageUrl;
+    private WebElement newTab;
 
-    public WindowsPage(UITest caller) {
-        this.caller = caller;
-        this.pageUrl = this.caller.getBaseUrl() + "/windows";
-        this.caller.getDriver().get(this.pageUrl);
-        PageFactory.initElements(this.caller.getDriver(), this);
-        this.caller.pageFactoryInitWait(pageTitle);
+    public WindowsPage(@NotNull UITest caller) {
+        super(caller, "/windows");
     }
 
-    public Boolean isPageOpen() { return this.caller.isPageOpen(this.pageUrl, this.pageTitle); }
+    @Override
+    protected @NotNull WebElement pageTitle() {
+        return pageTitle;
+    }
 
     public void clickLink() {
-        this.link.click(); }
+        this.link.click();
+    }
 
-    public Boolean validateNewTab() {
-        WebDriverWait wait = new WebDriverWait(caller.getDriver(), Duration.ofSeconds(30));
-        String originalWindow = caller.getDriver().getWindowHandle();
-        String expectedMessage ="New Window";
+    public boolean validateNewTab() {
+        String originalWindow = driver().getWindowHandle();
+        String expectedMessage = "New Window";
 
         this.clickLink();
-        wait.until(numberOfWindowsToBe(2));
+        waitFor(Duration.ofSeconds(30)).until(numberOfWindowsToBe(2));
 
-        //Loop through until we find a new window handle
-        for (String windowHandle : caller.getDriver().getWindowHandles()) {
-            if(!originalWindow.contentEquals(windowHandle)) {
-                caller.getDriver().switchTo().window(windowHandle);
-                wait.until(titleIs("New Window"));
+        for (String windowHandle : driver().getWindowHandles()) {
+            if (!originalWindow.contentEquals(windowHandle)) {
+                driver().switchTo().window(windowHandle);
+                waitFor(Duration.ofSeconds(30)).until(titleIs("New Window"));
                 return newTab.getText().equals(expectedMessage);
             }
         }
-        return false;
+        throw new IllegalStateException("New window handle was not found");
     }
 }

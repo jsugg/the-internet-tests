@@ -12,6 +12,7 @@ public class UploadTest extends UITest {
     @Test(description = "Upload a file", testName="UI-UPLOAD-001")
     public void fileUpload() {
         UploadPage uploadPage = new UploadPage(this);
+        uploadPage.open();
 
         // Validate page loaded
         Assert.assertTrue(uploadPage.isPageOpen(), "Page not open");

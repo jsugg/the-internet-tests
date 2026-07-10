@@ -1,31 +1,33 @@
 package theinternetwebsite.ui.pageobjects;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import theinternetwebsite.ui.UITest;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import theinternetwebsite.ui.UITest;
 
-public class CheckboxesPage {
+public class CheckboxesPage extends BasePage {
+    private static final By CHECKBOXES = By.cssSelector("input[type='checkbox']");
 
-    private final UITest caller;
+    @FindBy(css = "h3")
+    private WebElement pageTitle;
+
     private List<Boolean> currentValues = new ArrayList<>();
-    private List<WebElement> checkboxes;
+    private List<WebElement> checkboxes = new ArrayList<>();
 
-    private final By checkboxesLocator = By.cssSelector("input[type='checkbox']");
-
-    public CheckboxesPage(UITest caller) {
-        this.caller = caller;
-        this.checkboxes = this.caller.getDriver().findElements(By.cssSelector("input[type='checkbox']"));
+    public CheckboxesPage(@NotNull UITest caller) {
+        super(caller, "/checkboxes");
     }
 
-    public boolean isPageOpen() {
-        this.caller.getDriver().get(this.caller.getBaseUrl() + "/checkboxes");
-        return this.caller.getDriver().getTitle().equals("The Internet");
+    @Override
+    protected @NotNull WebElement pageTitle() {
+        return pageTitle;
     }
 
     public List<Boolean> getAllCheckboxCurrentValues() {
-        this.checkboxes = this.caller.getDriver().findElements(checkboxesLocator);
+        this.checkboxes = driver().findElements(CHECKBOXES);
         this.currentValues = new ArrayList<>();
         for (WebElement checkboxElement : this.checkboxes) {
             currentValues.add(checkboxElement.isSelected());
@@ -43,6 +45,6 @@ public class CheckboxesPage {
     }
 
     public boolean getCheckboxCurrentValue(int index) {
-        return currentValues.get(index)? currentValues.get(index) : false;
+        return currentValues.get(index);
     }
 }

@@ -20,6 +20,7 @@ public class DynamicContentTest extends UITest {
     @BeforeMethod
     public void setup() {
         dynamicContentPage = new DynamicContentPage(this);
+        dynamicContentPage.open();
         Assert.assertTrue(dynamicContentPage.isPageOpen(), "Page not open");
     }
 

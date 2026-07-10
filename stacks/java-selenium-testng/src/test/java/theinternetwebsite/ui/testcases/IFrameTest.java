@@ -3,7 +3,6 @@ package theinternetwebsite.ui.testcases;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import theinternetwebsite.ui.UITest;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import theinternetwebsite.ui.pageobjects.IFramePage;
 
 public class IFrameTest extends UITest {
@@ -13,13 +12,14 @@ public class IFrameTest extends UITest {
     @Test(description = "Switches between contexts and performs operations", testName="UI-IFRAME-001")
     public void testContextSwitching() {
         IFramePage iFramePage = new IFramePage(this);
+        iFramePage.open();
         String textBucket = "Test in progress...Your content goes here.Your content goes here.", aux;
 
         // Validate page loaded
         Assert.assertTrue(iFramePage.isPageOpen(), "Page not open");
 
         // Write to the iframe's context textarea
-        this.setDriver((RemoteWebDriver) iFramePage.switchTo("iframe"));
+        iFramePage.switchToIFrame();
         aux = iFramePage.getIFrameTextAreaText();
         iFramePage.writeIFrameTextAreaText(textBucket);
         // Validate expected text
@@ -27,7 +27,7 @@ public class IFrameTest extends UITest {
 
         // Access the main page's context page title
         aux = this.getDriver().toString();
-        this.setDriver((RemoteWebDriver) iFramePage.switchTo("main"));
+        iFramePage.switchToMain();
         textBucket = iFramePage.getPageTitle();
         // Validate context elements reachable
         Assert.assertEquals(iFramePage.getPageTitle(), textBucket, "Page title doesn't match the previous value");
@@ -37,7 +37,7 @@ public class IFrameTest extends UITest {
 
         // Write to the textarea
         aux = this.getDriver().toString();
-        this.setDriver((RemoteWebDriver) iFramePage.switchTo("iframe"));
+        iFramePage.switchToIFrame();
         iFramePage.clearIFrameTextAreaText();
         iFramePage.writeIFrameTextAreaText(textBucket);
         // Validate expected text

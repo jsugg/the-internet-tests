@@ -27,6 +27,7 @@ public class LoginTest extends UITest {
     @Test(description="Login form - Using valid Credentials", groups={ "loginForm" }, testName="UI-LOGIN-001")
     public void successfulLogin(@Optional(DEFAULT_USERNAME) String username, @Optional(DEFAULT_PASSWORD) String password) {
         LoginFormPage loginFormPage = new LoginFormPage(this);
+        loginFormPage.open();
 
         // Validate page loaded
         Assert.assertTrue(loginFormPage.isPageOpen(), "Page not open");
@@ -34,8 +35,8 @@ public class LoginTest extends UITest {
         // Validate login succeeded
         this.login(loginFormPage, username, password);
         new WebDriverWait(this.getDriver(), Duration.ofSeconds(10))
-                .until(ExpectedConditions.urlToBe(loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL));
-        Assert.assertEquals(this.getDriver().getCurrentUrl(), loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL);
+                .until(ExpectedConditions.urlToBe(loginFormPage.getExpectedLoggedInPageUrl()));
+        Assert.assertEquals(this.getDriver().getCurrentUrl(), loginFormPage.getExpectedLoggedInPageUrl());
     }
 
     @Parameters({"username", "password"})
@@ -48,7 +49,7 @@ public class LoginTest extends UITest {
                 .until(ExpectedConditions.urlToBe(this.getBaseUrl() + "/login"));
 
         // Validate login failed due to invalid username
-        Assert.assertNotEquals(this.getDriver().getCurrentUrl(), loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL);
+        Assert.assertNotEquals(this.getDriver().getCurrentUrl(), loginFormPage.getExpectedLoggedInPageUrl());
         Assert.assertTrue(loginFormPage.getErrorMessage().contains(expectedUserErrorMessage), "expectedErrorMessage mismatch");
     }
 
@@ -62,12 +63,14 @@ public class LoginTest extends UITest {
                 .until(ExpectedConditions.urlToBe(this.getBaseUrl() + "/login"));
 
         // Validate login failed due to invalid password
-        Assert.assertNotEquals(this.getDriver().getCurrentUrl(), loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL);
+        Assert.assertNotEquals(this.getDriver().getCurrentUrl(), loginFormPage.getExpectedLoggedInPageUrl());
         Assert.assertTrue(loginFormPage.getErrorMessage().contains(expectedPasswordErrorMessage), "expectedErrorMessage mismatch");
     }
 
     private @NotNull LoginFormPage login(String username, String password) {
-        return this.login(new LoginFormPage(this), username, password);
+        LoginFormPage loginFormPage = new LoginFormPage(this);
+        loginFormPage.open();
+        return this.login(loginFormPage, username, password);
     }
 
     private @NotNull LoginFormPage login(LoginFormPage loginFormPage, String username, String password) {

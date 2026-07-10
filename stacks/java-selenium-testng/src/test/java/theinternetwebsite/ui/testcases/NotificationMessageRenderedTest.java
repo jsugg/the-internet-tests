@@ -12,6 +12,7 @@ public class NotificationMessageRenderedTest extends UITest {
     @Test(description="Validates messages shown inside the flash box", testName="UI-NOTIFY-001")
     public void validateFlashMessages() {
         NotificationMessageRenderedPage notificationMessageRenderedPage = new NotificationMessageRenderedPage(this);
+        notificationMessageRenderedPage.open();
 
         // Validate page loaded
         Assert.assertTrue(notificationMessageRenderedPage.isPageOpen(), "Page not open");
