@@ -23,30 +23,38 @@ This repository is an educational automation playbook for [The Internet](https:/
 - Node.js 22.13 or newer
 - npm
 - Docker
+- Docker Compose
 - Chrome or Chromium for local browser execution
 
-## Run the Java suite
+## Start the demo app
 
-Start the demo app:
+Use Docker Compose from the repository root:
 
 ```bash
-docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:v2.6.5
+docker compose -f docker/compose.yml up -d website
 ```
 
-Run the tests:
+Run the Java tests:
 
 ```bash
 cd stacks/java-selenium-testng
 mvn test
 ```
 
-Stop the app when finished:
+Run the TypeScript smoke tests:
 
 ```bash
-docker stop the-internet
+cd stacks/ts-playwright
+THE_INTERNET_BASE_URL=http://localhost:7080 npm run test:chromium:smoke
 ```
 
-See [`stacks/java-selenium-testng/README.md`](stacks/java-selenium-testng/README.md) for Java stack details and the legacy runner notes. See [`stacks/ts-playwright/README.md`](stacks/ts-playwright/README.md) for TypeScript stack commands.
+Stop the app from the repository root:
+
+```bash
+docker compose -f docker/compose.yml down
+```
+
+See [`stacks/java-selenium-testng/README.md`](stacks/java-selenium-testng/README.md) for Java stack details and local Grid usage. See [`stacks/ts-playwright/README.md`](stacks/ts-playwright/README.md) for TypeScript stack commands.
 
 ## Contributing
 
