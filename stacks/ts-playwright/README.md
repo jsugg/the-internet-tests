@@ -46,4 +46,4 @@ docker compose -f docker/compose.yml down
 
 ## Browser projects
 
-`playwright.config.ts` defines desktop Chromium, Firefox, WebKit, Mobile Chrome, and Mobile Safari projects. PR CI runs only the Chromium smoke project to keep feedback fast.
+`playwright.config.ts` defines desktop Chromium, Firefox, WebKit, branded Chrome and Edge channels, Mobile Chrome, and Mobile Safari projects. PR CI runs only the Chromium smoke project to keep feedback fast.

@@ -1,0 +1,176 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+    inputs:
+      include-flaky-demo:
+        description: Include tests tagged @flaky-demo
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  java-nightly:
+    name: Java ${{ matrix.browser }} nightly
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - chrome
+          - edge
+          - firefox
+
+    services:
+      website:
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
+        ports:
+          - 7080:5000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Run Java nightly regression
+        run: >-
+          mvn -B -f stacks/java-selenium-testng/pom.xml -P CLI_Parameters clean test
+          -DsuiteXmlFile=src/test/resources/regression.xml
+          -Dbrowser=${{ matrix.browser }}
+          -DbrowserVersion=
+          -DheadlessBrowser=true
+          -DuseSeleniumGrid=false
+          -DtestsThreadCount=1
+          -DwebAppAddress=http://localhost:7080
+          -DtestRunnerAddress=http://localhost:7080
+          -DseleniumGridAddress=http://localhost:4444/wd/hub
+
+      - name: Upload Surefire XML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-java-${{ matrix.browser }}-surefire-xml
+          path: stacks/java-selenium-testng/target/surefire-reports/**/*.xml
+          if-no-files-found: warn
+
+  ts-nightly:
+    name: TypeScript ${{ matrix.project }} nightly
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            browser: chromium
+            grep-invert: "@not-ci"
+            artifact-name: nightly-ts-chromium-artifacts
+          - project: firefox
+            browser: firefox
+            grep-invert: "@http|@not-ci"
+            artifact-name: nightly-ts-firefox-artifacts
+          - project: webkit
+            browser: webkit
+            grep-invert: "@http|@not-ci"
+            artifact-name: nightly-ts-webkit-artifacts
+          - project: chrome
+            browser: chrome
+            grep-invert: "@http|@not-ci"
+            artifact-name: nightly-ts-chrome-artifacts
+          - project: msedge
+            browser: msedge
+            grep-invert: "@http|@not-ci"
+            artifact-name: nightly-ts-msedge-artifacts
+          - project: Mobile Chrome
+            browser: chromium
+            grep-invert: "@desktop|@http|@not-ci"
+            artifact-name: nightly-ts-mobile-chrome-artifacts
+          - project: Mobile Safari
+            browser: webkit
+            grep-invert: "@desktop|@http|@not-ci"
+            artifact-name: nightly-ts-mobile-safari-artifacts
+
+    services:
+      website:
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
+        ports:
+          - 7080:5000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: stacks/ts-playwright/package-lock.json
+
+      - name: Install TypeScript stack dependencies
+        working-directory: stacks/ts-playwright
+        run: npm ci
+
+      - name: Plan TypeScript nightly slice
+        id: slice
+        working-directory: stacks/ts-playwright
+        env:
+          INCLUDE_FLAKY_DEMO: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.include-flaky-demo == 'true' }}
+          PW_PROJECT: ${{ matrix.project }}
+          PW_GREP_INVERT: ${{ matrix.grep-invert }}
+        run: |
+          args=(--project "$PW_PROJECT" --pass-with-no-tests)
+          grep_invert="$PW_GREP_INVERT"
+          if [ "$INCLUDE_FLAKY_DEMO" != "true" ]; then
+            grep_invert="${grep_invert}|@flaky-demo"
+          fi
+          if [ -n "$grep_invert" ]; then
+            args+=(--grep-invert "$grep_invert")
+          fi
+          npx playwright test "${args[@]}" --list | tee /tmp/playwright-list.txt
+          count=$(awk '/^Total:/ { print $2 }' /tmp/playwright-list.txt)
+          echo "count=${count:-0}" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$grep_invert" > /tmp/playwright-grep-invert.txt
+
+      - name: Install Playwright browser
+        if: steps.slice.outputs.count != '0'
+        working-directory: stacks/ts-playwright
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run TypeScript nightly slice
+        if: steps.slice.outputs.count != '0'
+        working-directory: stacks/ts-playwright
+        env:
+          THE_INTERNET_BASE_URL: http://localhost:7080
+          PW_PROJECT: ${{ matrix.project }}
+        run: |
+          args=(--project "$PW_PROJECT" --pass-with-no-tests)
+          grep_invert=$(cat /tmp/playwright-grep-invert.txt)
+          if [ -n "$grep_invert" ]; then
+            args+=(--grep-invert "$grep_invert")
+          fi
+          npx playwright test "${args[@]}"
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: |
+            stacks/ts-playwright/playwright-report/
+            stacks/ts-playwright/test-results/
+          if-no-files-found: ignore
