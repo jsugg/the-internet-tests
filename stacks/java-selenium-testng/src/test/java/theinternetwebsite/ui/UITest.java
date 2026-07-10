@@ -63,8 +63,9 @@ public class UITest {
 
     @AfterTest
     public void tearDown() {
-        driver.close();
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     private RemoteWebDriver requestChromeDriver(String browser, String browserVersion, String headless, String remoteUrl, @NotNull String useSeleniumGrid) {
