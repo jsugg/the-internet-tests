@@ -4,37 +4,90 @@ on:
   pull_request:
     branches:
       - master
-    paths:
-      - stacks/java-selenium-testng/**
-      - stacks/ts-playwright/**
-      - scenarios/**
-      - tools/**
-      - docs/**
-      - .github/workflows/pr.yml
   push:
     branches:
       - master
-    paths:
-      - stacks/java-selenium-testng/**
-      - stacks/ts-playwright/**
-      - scenarios/**
-      - tools/**
-      - docs/**
-      - .github/workflows/pr.yml
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  java-suite:
-    name: Java Selenium suite
+  repo-lint:
+    name: Repository lint
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Lint GitHub Actions workflows
+        run: >-
+          docker run --rm
+          -v "$PWD:/repo:ro"
+          -w /repo
+          rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+          -color
+
+      - name: Lint pull request commits
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: >-
+          npx --yes
+          -p @commitlint/cli@21.2.1
+          -p @commitlint/config-conventional@21.2.0
+          commitlint
+          --config commitlint.config.cjs
+          --from "$BASE_SHA"
+          --to "$HEAD_SHA"
+          --verbose
+
+      - name: Lint latest commit
+        if: github.event_name != 'pull_request'
+        run: >-
+          npx --yes
+          -p @commitlint/cli@21.2.1
+          -p @commitlint/config-conventional@21.2.0
+          commitlint
+          --config commitlint.config.cjs
+          --last
+          --verbose
+
+      - name: Lint Markdown
+        run: git ls-files -z '*.md' | xargs -0 npx --yes markdownlint-cli2@0.23.0
+
+  catalog:
+    name: Scenario catalog
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Check scenario catalog
+        run: |
+          python3 tools/check-scenarios.py --write-matrix
+          git diff --exit-code docs/scenario-matrix.md
+
+  java-fast:
+    name: Java compile and smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
 
     services:
       website:
-        image: gprestes/the-internet:latest
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
         ports:
           - 7080:5000
 
@@ -49,15 +102,13 @@ jobs:
           java-version: '25'
           cache: maven
 
-      - name: Check scenario catalog
-        run: |
-          python3 tools/check-scenarios.py --write-matrix
-          git diff --exit-code docs/scenario-matrix.md
+      - name: Compile Java tests
+        run: mvn -B -f stacks/java-selenium-testng/pom.xml clean test-compile
 
-      - name: Run Java suite
+      - name: Run Java smoke
         run: >-
-          mvn -B -f stacks/java-selenium-testng/pom.xml -P CLI_Parameters clean test
-          -DsuiteXmlFile=src/test/resources/regression.xml
+          mvn -B -f stacks/java-selenium-testng/pom.xml -P CLI_Parameters test
+          -DsuiteXmlFile=src/test/resources/smoke.xml
           -Dbrowser=chrome
           -DbrowserVersion=
           -DheadlessBrowser=true
@@ -71,18 +122,18 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: surefire-xml
+          name: java-smoke-surefire-xml
           path: stacks/java-selenium-testng/target/surefire-reports/**/*.xml
           if-no-files-found: warn
 
-  ts-smoke:
-    name: TypeScript Playwright smoke
+  ts-fast:
+    name: TypeScript typecheck and smoke
     runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     services:
       website:
-        image: gprestes/the-internet:latest
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
         ports:
           - 7080:5000
 
@@ -101,10 +152,6 @@ jobs:
         working-directory: stacks/ts-playwright
         run: npm ci
 
-      - name: Install Chromium browser
-        working-directory: stacks/ts-playwright
-        run: npx playwright install --with-deps chromium
-
       - name: Type-check TypeScript stack
         working-directory: stacks/ts-playwright
         run: npm run typecheck
@@ -112,6 +159,14 @@ jobs:
       - name: Lint TypeScript stack
         working-directory: stacks/ts-playwright
         run: npm run lint
+
+      - name: Check TypeScript stack formatting
+        working-directory: stacks/ts-playwright
+        run: npm run format:check
+
+      - name: Install Chromium browser
+        working-directory: stacks/ts-playwright
+        run: npx playwright install --with-deps chromium
 
       - name: Run TypeScript Chromium smoke
         working-directory: stacks/ts-playwright
@@ -123,7 +178,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ts-playwright-artifacts
+          name: ts-smoke-playwright-artifacts
           path: |
             stacks/ts-playwright/playwright-report/
             stacks/ts-playwright/test-results/

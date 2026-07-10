@@ -20,7 +20,7 @@ npx playwright install --with-deps chromium
 Start the demo app from the repository root:
 
 ```bash
-docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:latest
+docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:v2.6.5
 ```
 
 Run the smoke scenario:

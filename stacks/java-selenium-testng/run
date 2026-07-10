@@ -23,8 +23,8 @@ SUREFIRE_REPORTS_FILE="/target/surefire-reports/index.html"
 
 # BROWSER for remote use
 BROWSER="chrome"
-BROWSER_VERSION="106.0.5249.119"
-REMOTE_CHROME_NODE_IMAGE_VERSION="4.5.2-20221021"
+BROWSER_VERSION=""
+REMOTE_CHROME_NODE_IMAGE_VERSION="4.37.0-20251020"
 # BROWSER_VERSION for local use
 # BROWSER=$(printf "chrome")
 # BROWSER_VERSION=""
@@ -59,7 +59,7 @@ done
 # Containers
 #
 # The-Internet app
-CONTAINER_APP_IMAGE="gprestes/the-internet:latest";
+CONTAINER_APP_IMAGE="gprestes/the-internet:v2.6.5";
 CONTAINER_APP_PORTS="7080:5000";
 CONTAINER_APP_RUN_CMD="docker run -d \
       --rm --net theinternet --name website \
@@ -67,7 +67,7 @@ CONTAINER_APP_RUN_CMD="docker run -d \
 CONTAINER_APP_IP="0.0.0.0"
 #
 # Selenium hub
-CONTAINER_SELENIUM_HUB_IMAGE="selenium/hub:latest";
+CONTAINER_SELENIUM_HUB_IMAGE="selenium/hub:4.37.0-20251020";
 CONTAINER_SELENIUM_HUB_PORTS="4442-4444:4442-4444";
 CONTAINER_SELENIUM_HUB_RUN_CMD="docker run -d \
       -e SE_VNC_NO_PASSWORD=1 \
@@ -78,7 +78,7 @@ CONTAINER_SELENIUM_HUB_RUN_CMD="docker run -d \
 CONTAINER_SELENIUM_HUB_IP="0.0.0.0"
 #
 # Chrome nodes
-CONTAINER_CHROME_NODES_IMAGE="selenium/node-chrome:latest";
+CONTAINER_CHROME_NODES_IMAGE="selenium/node-chrome:4.37.0-20251020";
 CONTAINER_CHROME_NODES_RUN_CMD="docker run -d --name chrome-node%s \
       --net theinternet -e SE_EVENT_BUS_HOST=selenium-hub \
       -v ""$(pwd)""/target:/home/seluser/Downloads \

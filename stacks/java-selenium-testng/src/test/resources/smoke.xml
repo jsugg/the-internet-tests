@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Coding Challenge Website UI Smoke Suite">
+    <parameter name="browser" value="${theInternetWebsite.browser}"/>
+    <parameter name="browserVersion" value="${theInternetWebsite.browserVersion}"/>
+    <parameter name="headlessBrowser" value="${theInternetWebsite.headlessBrowser}"/>
+    <parameter name="useSeleniumGrid" value="${theInternetWebsite.useSeleniumGrid}"/>
+    <parameter name="seleniumGridUrl" value="${theInternetWebsite.seleniumGridUrl}"/>
+    <parameter name="baseUrlSG" value="${theInternetWebsite.baseUrlSG}"/>
+    <parameter name="baseUrl" value="${theInternetWebsite.baseUrl}"/>
+    <test name="Login smoke">
+        <parameter name="username" value="tomsmith"/>
+        <parameter name="password" value="SuperSecretPassword!"/>
+        <classes>
+            <class name="theinternetwebsite.ui.testcases.LoginTest">
+                <methods><include name="successfulLogin"/></methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Checkboxes smoke">
+        <classes>
+            <class name="theinternetwebsite.ui.testcases.CheckboxesTest"/>
+        </classes>
+    </test>
+    <test name="Dropdown smoke">
+        <classes>
+            <class name="theinternetwebsite.ui.testcases.DropdownTest"/>
+        </classes>
+    </test>
+    <test name="Dynamic loading smoke">
+        <classes>
+            <class name="theinternetwebsite.ui.testcases.DynamicLoadingTest"/>
+        </classes>
+    </test>
+    <test name="Dynamic controls smoke">
+        <classes>
+            <class name="theinternetwebsite.ui.testcases.DynamicControlsTest">
+                <methods><include name="textboxTest"/></methods>
+            </class>
+        </classes>
+    </test>
+    <test name="JavaScript alerts smoke">
+        <classes>
+            <class name="theinternetwebsite.ui.testcases.JavascriptAlertsTest">
+                <methods><include name="popupInputField"/></methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Upload smoke">
+        <classes>
+            <class name="theinternetwebsite.ui.testcases.UploadTest"/>
+        </classes>
+    </test>
+</suite>
