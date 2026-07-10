@@ -57,6 +57,5 @@ public class LoginFormPage {
 
     public String getErrorMessage() {
         WebDriverWait wait = new WebDriverWait(this.caller.getDriver(), Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(this.errorMessage));
-        return errorMessage.getText(); }
+        return wait.until(ExpectedConditions.visibilityOf(this.errorMessage)).getText(); }
 }
