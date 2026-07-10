@@ -133,7 +133,7 @@ scenarios:
     title: Link opens expected content in a new tab
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-NOTIFY-001
     title: Notification message flash shows expected messages
     priority: P1
