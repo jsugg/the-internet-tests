@@ -134,6 +134,11 @@ scenarios:
     priority: P0
     tags: []
     coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+  - id: HTTP-STATUS-001
+    title: Status code endpoints return expected responses
+    priority: P0
+    tags: [http]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
   - id: UI-NOTIFY-001
     title: Notification message flash shows expected messages
     priority: P1

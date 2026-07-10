@@ -9,6 +9,7 @@ JAVA = Path("stacks/java-selenium-testng/src/test/java/theinternetwebsite/ui/tes
 TS = Path("stacks/ts-playwright/tests")
 MATRIX = Path("docs/scenario-matrix.md")
 STACKS = ("java-selenium-testng", "ts-playwright", "python-playwright")
+SCENARIO_ID = r"(?:UI|HTTP)-[A-Z0-9-]+"
 
 def catalog() -> list[dict[str, object]]:
     rows: list[dict[str, object]] = []
@@ -24,11 +25,11 @@ def catalog() -> list[dict[str, object]]:
 
 def java_ids() -> set[str]:
     text = "\n".join(p.read_text() for p in JAVA.glob("*.java"))
-    return set(re.findall(r'testName\s*=\s*"([A-Z0-9-]+)"', text))
+    return set(re.findall(rf'testName\s*=\s*"({SCENARIO_ID})"', text))
 
 def ts_ids() -> set[str]:
     text = "\n".join(p.read_text() for p in TS.glob("**/*.ts")) if TS.exists() else ""
-    return set(re.findall(r"\b(UI-[A-Z0-9-]+)\b", text))
+    return set(re.findall(rf"\b({SCENARIO_ID})\b", text))
 
 def check(rows: list[dict[str, object]]) -> None:
     ids = [str(r["id"]) for r in rows]; all_ids = set(ids); java_tests = java_ids(); ts_tests = ts_ids()
