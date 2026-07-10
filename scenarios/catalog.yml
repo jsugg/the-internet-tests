@@ -113,17 +113,17 @@ scenarios:
     title: JavaScript alert buttons open popups
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-JSALERT-002
     title: JavaScript alert messages match expectations
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-JSALERT-003
     title: JavaScript prompt accepts input
     priority: P0
     tags: [smoke]
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-JSERROR-001
     title: JavaScript error page exposes the expected error
     priority: P1
