@@ -2,16 +2,17 @@ package theinternetwebsite.ui.pageobjects;
 
 import static theinternetwebsite.ui.UITest.downloadsFolder;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.HasDownloads;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -38,46 +39,23 @@ public class DownloadPage extends BasePage {
 
     public boolean fileDownload() {
         String downloadHref = defaultWait().until(ExpectedConditions.elementToBeClickable(downloadLink)).getAttribute("href");
-        String downloadFileName = Paths.get(downloadHref).getFileName().toString();
-        String tempFileName = downloadFileName.split("\\.")[0] + ".crdownload";
+        if (downloadHref == null || downloadHref.isBlank()) {
+            throw new IllegalStateException("Download link does not expose a file URL.");
+        }
+        String downloadFileName = Paths.get(URI.create(downloadHref).getPath()).getFileName().toString();
         Path pathToReferenceFile = Paths.get(relativePathToReferenceFile.toString());
-        Path tempDownloadedFilePath = Paths.get(downloadsFolder, tempFileName);
-        Path expectedDownloadedFilePath = Paths.get(downloadsFolder, downloadFileName);
-        File expectedFile = expectedDownloadedFilePath.toAbsolutePath().toFile();
-        File expectedTmpFile = tempDownloadedFilePath.toAbsolutePath().toFile();
-        long bytes = -1;
-        long newBytes = 0;
+        Path expectedDownloadedFilePath = Paths.get(downloadsFolder, downloadFileName).toAbsolutePath();
 
         if (!pathToReferenceFile.toAbsolutePath().toFile().exists()) {
             throw new IllegalStateException("Reference file does not exist: " + pathToReferenceFile.toAbsolutePath());
         }
 
-        try {
-            Files.deleteIfExists(expectedFile.toPath());
-            Files.deleteIfExists(expectedTmpFile.toPath());
-        } catch (IOException e) {
-            throw new UncheckedIOException("Could not delete existing download files", e);
-        }
-
-        caller().downloadFileHeadless(downloadHref, expectedFile.toString());
-        sleepForDownloadBuffer(5000);
-
-        while ((bytes != newBytes) && expectedTmpFile.exists() && !expectedFile.exists()) {
-            try {
-                newBytes = Files.size(tempDownloadedFilePath);
-            } catch (IOException e) {
-                throw new UncheckedIOException("Could not read partial download size", e);
-            }
-            bytes = newBytes;
-            sleepForDownloadBuffer(1000);
-        }
-
-        if (!expectedFile.exists()) {
-            throw new IllegalStateException("Download failed. File does not exist: " + expectedFile);
-        }
+        deleteExistingDownload(expectedDownloadedFilePath, downloadFileName);
+        defaultWait().until(ExpectedConditions.elementToBeClickable(downloadLink)).click();
+        waitForBrowserDownload(downloadFileName, expectedDownloadedFilePath);
 
         try {
-            return compareByMemoryMappedFiles(expectedDownloadedFilePath.toAbsolutePath(), pathToReferenceFile.toAbsolutePath());
+            return compareByMemoryMappedFiles(expectedDownloadedFilePath, pathToReferenceFile.toAbsolutePath());
         } catch (IOException e) {
             throw new UncheckedIOException("Could not compare downloaded file", e);
         }
@@ -100,12 +78,35 @@ public class DownloadPage extends BasePage {
         }
     }
 
-    private static void sleepForDownloadBuffer(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("Interrupted while waiting for the download buffer", e);
+    private void waitForBrowserDownload(@NotNull String downloadFileName, @NotNull Path expectedDownloadedFilePath) {
+        HasDownloads downloads = driver();
+        if (downloads.isDownloadsEnabled()) {
+            defaultWait().until(d -> downloads.getDownloadedFiles().stream()
+                    .anyMatch(downloadedFile -> downloadedFile.getName().equals(downloadFileName)));
+            try {
+                downloads.downloadFile(downloadFileName, expectedDownloadedFilePath.getParent());
+                downloads.deleteDownloadableFiles();
+            } catch (IOException e) {
+                throw new UncheckedIOException("Could not retrieve managed browser download", e);
+            }
+            return;
         }
+
+        defaultWait().until(d -> Files.exists(expectedDownloadedFilePath) && !Files.exists(partialDownloadPath(downloadFileName)));
+    }
+
+    private static void deleteExistingDownload(@NotNull Path expectedDownloadedFilePath, @NotNull String downloadFileName) {
+        try {
+            Files.createDirectories(expectedDownloadedFilePath.getParent());
+            Files.deleteIfExists(expectedDownloadedFilePath);
+            Files.deleteIfExists(partialDownloadPath(downloadFileName));
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not delete existing download files", e);
+        }
+    }
+
+    private static @NotNull Path partialDownloadPath(@NotNull String downloadFileName) {
+        String tempFileName = downloadFileName.split("\\.")[0] + ".crdownload";
+        return Paths.get(downloadsFolder, tempFileName).toAbsolutePath();
     }
 }

@@ -1,12 +1,15 @@
 package theinternetwebsite.ui.driver;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -31,6 +34,7 @@ public final class DriverFactory {
     private @NotNull RemoteWebDriver createChromeDriver(@NotNull TestRunConfig config) {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setExperimentalOption("prefs", chromePreferences());
+        chromeOptions.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         chromeOptions.addArguments("--window-size=1920,1200");
         if (config.headless() && !config.useSeleniumGrid()) {
             chromeOptions.addArguments("--headless=new");
@@ -47,6 +51,9 @@ public final class DriverFactory {
     private @NotNull RemoteWebDriver createFirefoxDriver(@NotNull TestRunConfig config) {
         FirefoxOptions firefoxOptions = new FirefoxOptions();
         firefoxOptions.addArguments("--width=1920", "--height=1200");
+        firefoxOptions.addPreference("browser.download.folderList", 2);
+        firefoxOptions.addPreference("browser.download.dir", DOWNLOADS_FOLDER);
+        firefoxOptions.addPreference("browser.helperApps.neverAsk.saveToDisk", "text/plain,application/octet-stream");
         if (config.headless() && !config.useSeleniumGrid()) {
             firefoxOptions.addArguments("-headless");
         }
@@ -116,6 +123,7 @@ public final class DriverFactory {
     }
 
     private static void setGridCapabilities(@NotNull org.openqa.selenium.MutableCapabilities options) {
+        options.setCapability("se:downloadsEnabled", true);
         options.setCapability("se:recordVideo", true);
         options.setCapability("se:timeZone", "US/Pacific");
         options.setCapability("se:screenResolution", "1920x1080");
@@ -138,8 +146,8 @@ public final class DriverFactory {
 
     private static @NotNull URL remoteUrl(@NotNull TestRunConfig config) {
         try {
-            return new URL(config.seleniumGridUrl());
-        } catch (MalformedURLException e) {
+            return new URI(config.seleniumGridUrl()).toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             throw new IllegalArgumentException("Invalid Selenium Grid URL: " + config.seleniumGridUrl(), e);
         }
     }
