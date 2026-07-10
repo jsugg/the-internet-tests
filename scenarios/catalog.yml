@@ -48,7 +48,7 @@ scenarios:
     title: Dropdown options can be selected
     priority: P0
     tags: [smoke]
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DYNCONTENT-001
     title: Dynamic content changes on reload
     priority: P1
