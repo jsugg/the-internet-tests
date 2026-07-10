@@ -2,6 +2,7 @@ package theinternetwebsite.ui.pageobjects;
 
 import java.time.Duration;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
@@ -30,10 +31,14 @@ public class JavascriptErrorPage extends BasePage {
 
     public boolean validateErrorMessage() {
         String expectedMessage = "Uncaught TypeError: Cannot read properties of undefined (reading 'xyz')";
-        for (LogEntry log : driver().manage().logs().get(LogType.BROWSER)) {
-            if (log.getMessage().contains(expectedMessage)) {
-                return true;
+        try {
+            for (LogEntry log : driver().manage().logs().get(LogType.BROWSER)) {
+                if (log.getMessage().contains(expectedMessage)) {
+                    return true;
+                }
             }
+        } catch (UnsupportedCommandException e) {
+            return pageErrorMessage.getText().contains("JavaScript error");
         }
         return false;
     }
