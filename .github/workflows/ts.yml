@@ -33,26 +33,31 @@ jobs:
       matrix:
         include:
           - project: chromium
+            browser: chromium
             slice: regression
             grep: ''
             grep-invert: '@not-ci|@flaky-demo'
             artifact-name: ts-chromium-artifacts
           - project: firefox
+            browser: firefox
             slice: regression
             grep: ''
             grep-invert: '@http|@not-ci|@flaky-demo'
             artifact-name: ts-firefox-artifacts
           - project: webkit
+            browser: webkit
             slice: regression
             grep: ''
             grep-invert: '@http|@not-ci|@flaky-demo'
             artifact-name: ts-webkit-artifacts
           - project: Mobile Chrome
+            browser: chromium
             slice: mobile-emulation
             grep: '@mobile-emulation'
             grep-invert: '@desktop|@not-ci|@flaky-demo'
             artifact-name: ts-mobile-chrome-artifacts
           - project: Mobile Safari
+            browser: webkit
             slice: mobile-emulation
             grep: '@mobile-emulation'
             grep-invert: '@desktop|@not-ci|@flaky-demo'
@@ -79,11 +84,32 @@ jobs:
         working-directory: stacks/ts-playwright
         run: npm ci
 
-      - name: Install Playwright browsers
+      - name: Plan TypeScript Playwright slice
+        id: slice
         working-directory: stacks/ts-playwright
-        run: npx playwright install --with-deps chromium firefox webkit
+        env:
+          PW_PROJECT: ${{ matrix.project }}
+          PW_GREP: ${{ matrix.grep }}
+          PW_GREP_INVERT: ${{ matrix.grep-invert }}
+        run: |
+          args=(--project "$PW_PROJECT" --pass-with-no-tests)
+          if [ -n "$PW_GREP" ]; then
+            args+=(--grep "$PW_GREP")
+          fi
+          if [ -n "$PW_GREP_INVERT" ]; then
+            args+=(--grep-invert "$PW_GREP_INVERT")
+          fi
+          npx playwright test "${args[@]}" --list | tee /tmp/playwright-list.txt
+          count=$(awk '/^Total:/ { print $2 }' /tmp/playwright-list.txt)
+          echo "count=${count:-0}" >> "$GITHUB_OUTPUT"
+
+      - name: Install Playwright browsers
+        if: steps.slice.outputs.count != '0'
+        working-directory: stacks/ts-playwright
+        run: npx playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run TypeScript Playwright slice
+        if: steps.slice.outputs.count != '0'
         working-directory: stacks/ts-playwright
         env:
           THE_INTERNET_BASE_URL: http://localhost:7080
