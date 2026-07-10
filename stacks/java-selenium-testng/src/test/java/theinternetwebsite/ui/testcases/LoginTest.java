@@ -14,10 +14,12 @@ import java.time.Duration;
 public class LoginTest extends UITest {
 
     //private final String username;
-    private final String DEFAULT_USERNAME  = "tomsmith";
+    private static final String DEFAULT_USERNAME  = "tomsmith";
     //private final String password;
-    private final String DEFAULT_PASSWORD = "SuperSecretPassword!";
+    private static final String DEFAULT_PASSWORD = "SuperSecretPassword!";
     //private final String invalid;
+    private static final String DEFAULT_INVALID_USERNAME = "invalidUsername";
+    private static final String DEFAULT_INVALID_PASSWORD = "invalidPassword";
 
     public LoginTest() {}
 
@@ -38,9 +40,9 @@ public class LoginTest extends UITest {
 
     @Parameters({"username", "password"})
     @Test(description="Login form - Using invalid Username", groups={ "loginForm" }, testName="UI-LOGIN-002")
-    public void invalidUsername(@Optional(DEFAULT_USERNAME) String ignoredUsername, @Optional(DEFAULT_PASSWORD) String password) {
+    public void invalidUsername(@Optional(DEFAULT_INVALID_USERNAME) String username, @Optional(DEFAULT_PASSWORD) String password) {
         String expectedUserErrorMessage = "Your username is invalid!";
-        LoginFormPage loginFormPage = this.login("invalidUsername", password);
+        LoginFormPage loginFormPage = this.login(username, password);
 
         new WebDriverWait(this.getDriver(), Duration.ofSeconds(10))
                 .until(ExpectedConditions.urlToBe(this.getBaseUrl() + "/login"));
@@ -52,9 +54,9 @@ public class LoginTest extends UITest {
 
     @Parameters({"username", "password"})
     @Test(description="Login form - Using invalid Password", groups={ "loginForm" }, testName="UI-LOGIN-003")
-    public void invalidPassword(@Optional(DEFAULT_USERNAME) String username, @Optional(DEFAULT_PASSWORD) String ignoredPassword) {
+    public void invalidPassword(@Optional(DEFAULT_USERNAME) String username, @Optional(DEFAULT_INVALID_PASSWORD) String password) {
         String expectedPasswordErrorMessage = "Your password is invalid!";
-        LoginFormPage loginFormPage = this.login(username, "invalidPassword");
+        LoginFormPage loginFormPage = this.login(username, password);
 
         new WebDriverWait(this.getDriver(), Duration.ofSeconds(10))
                 .until(ExpectedConditions.urlToBe(this.getBaseUrl() + "/login"));
