@@ -14,6 +14,11 @@ scenarios:
     priority: P0
     tags: []
     coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+  - id: UI-ADDREMOVE-001
+    title: Add and remove buttons update the dynamic DOM
+    priority: P0
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
   - id: UI-CHECKBOX-001
     title: Checkboxes toggle on and off
     priority: P0
