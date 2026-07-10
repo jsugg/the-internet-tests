@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -33,7 +32,7 @@ public class NotificationMessageRenderedPage extends BasePage {
     }
 
     public void clickOnLink() {
-        new Actions(driver()).moveToElement(this.link).click(this.link).perform();
+        waitFor(Duration.ofSeconds(30)).until(ExpectedConditions.elementToBeClickable(this.link)).click();
     }
 
     public String getFlashMessage() {

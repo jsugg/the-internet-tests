@@ -6,8 +6,13 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -17,9 +22,8 @@ public final class DriverFactory {
     public @NotNull RemoteWebDriver create(@NotNull TestRunConfig config) {
         return switch (config.browser()) {
             case "chrome", "remote-chrome" -> createChromeDriver(config);
-            case "firefox" -> unsupportedBrowser("firefox", "P3.3 implements Firefox sessions");
-            case "edge", "microsoftedge" -> unsupportedBrowser("microsoftedge", "P3.3 implements Edge sessions");
-            case "opera" -> unsupportedBrowser("opera", "P3.3 removes Opera from the supported matrix");
+            case "firefox" -> createFirefoxDriver(config);
+            case "edge", "microsoftedge" -> createEdgeDriver(config);
             default -> throw new IllegalStateException("Unexpected browser: " + config.browser());
         };
     }
@@ -27,41 +31,99 @@ public final class DriverFactory {
     private @NotNull RemoteWebDriver createChromeDriver(@NotNull TestRunConfig config) {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setExperimentalOption("prefs", chromePreferences());
-        chromeOptions.addArguments(
-                "download.prompt_for_download",
-                "false",
-                "safebrowsing.enabled",
-                "false",
-                "--remote-allow-origins=*",
-                "--ignore-certificate-errors",
-                "--disable-gpu",
-                "--disable-web-security",
-                "--allow-running-insecure-content",
-                "--ignore_ssl",
-                "--start-maximized",
-                "--disable-infobars",
-                "--test-type",
-                "--disable-extensions",
-                "--disable-dev-shm-usage",
-                "--no-sandbox");
-
+        chromeOptions.addArguments("--window-size=1920,1200");
         if (config.headless() && !config.useSeleniumGrid()) {
-            chromeOptions.addArguments("--headless", "--window-size=1920,1200", "--no-sandbox");
+            chromeOptions.addArguments("--headless=new");
         }
+        applyBrowserVersion(chromeOptions, config);
+        applyGridCapabilities(chromeOptions, config);
 
-        if (!config.browserVersion().isBlank() && !config.browserVersion().equals("''")) {
-            chromeOptions.setBrowserVersion(config.browserVersion());
+        if (config.usesRemoteDriver()) {
+            return remoteDriver(config, chromeOptions);
         }
+        return new ChromeDriver(chromeOptions);
+    }
 
-        if (!config.usesRemoteDriver()) {
-            return new ChromeDriver(chromeOptions);
+    private @NotNull RemoteWebDriver createFirefoxDriver(@NotNull TestRunConfig config) {
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        firefoxOptions.addArguments("--width=1920", "--height=1200");
+        if (config.headless() && !config.useSeleniumGrid()) {
+            firefoxOptions.addArguments("-headless");
         }
+        applyBrowserVersion(firefoxOptions, config);
+        applyGridCapabilities(firefoxOptions, config);
 
-        chromeOptions.setCapability("se:recordVideo", true);
-        chromeOptions.setCapability("se:timeZone", "US/Pacific");
-        chromeOptions.setCapability("se:screenResolution", "1920x1080");
+        if (config.usesRemoteDriver()) {
+            return remoteDriver(config, firefoxOptions);
+        }
+        return new FirefoxDriver(firefoxOptions);
+    }
 
-        RemoteWebDriver remoteDriver = new RemoteWebDriver(remoteUrl(config), chromeOptions);
+    private @NotNull RemoteWebDriver createEdgeDriver(@NotNull TestRunConfig config) {
+        EdgeOptions edgeOptions = new EdgeOptions();
+        edgeOptions.setExperimentalOption("prefs", chromePreferences());
+        edgeOptions.addArguments("--window-size=1920,1200");
+        if (config.headless() && !config.useSeleniumGrid()) {
+            edgeOptions.addArguments("--headless=new");
+        }
+        applyBrowserVersion(edgeOptions, config);
+        applyGridCapabilities(edgeOptions, config);
+
+        if (config.usesRemoteDriver()) {
+            return remoteDriver(config, edgeOptions);
+        }
+        return new EdgeDriver(edgeOptions);
+    }
+
+    private static void applyBrowserVersion(@NotNull ChromeOptions options, @NotNull TestRunConfig config) {
+        if (hasBrowserVersion(config)) {
+            options.setBrowserVersion(config.browserVersion());
+        }
+    }
+
+    private static void applyBrowserVersion(@NotNull FirefoxOptions options, @NotNull TestRunConfig config) {
+        if (hasBrowserVersion(config)) {
+            options.setBrowserVersion(config.browserVersion());
+        }
+    }
+
+    private static void applyBrowserVersion(@NotNull EdgeOptions options, @NotNull TestRunConfig config) {
+        if (hasBrowserVersion(config)) {
+            options.setBrowserVersion(config.browserVersion());
+        }
+    }
+
+    private static boolean hasBrowserVersion(@NotNull TestRunConfig config) {
+        return !config.browserVersion().isBlank() && !config.browserVersion().equals("''");
+    }
+
+    private static void applyGridCapabilities(@NotNull ChromeOptions options, @NotNull TestRunConfig config) {
+        if (config.usesRemoteDriver()) {
+            setGridCapabilities(options);
+        }
+    }
+
+    private static void applyGridCapabilities(@NotNull FirefoxOptions options, @NotNull TestRunConfig config) {
+        if (config.usesRemoteDriver()) {
+            setGridCapabilities(options);
+        }
+    }
+
+    private static void applyGridCapabilities(@NotNull EdgeOptions options, @NotNull TestRunConfig config) {
+        if (config.usesRemoteDriver()) {
+            setGridCapabilities(options);
+        }
+    }
+
+    private static void setGridCapabilities(@NotNull org.openqa.selenium.MutableCapabilities options) {
+        options.setCapability("se:recordVideo", true);
+        options.setCapability("se:timeZone", "US/Pacific");
+        options.setCapability("se:screenResolution", "1920x1080");
+    }
+
+    private static @NotNull RemoteWebDriver remoteDriver(
+            @NotNull TestRunConfig config, @NotNull Capabilities capabilities) {
+        RemoteWebDriver remoteDriver = new RemoteWebDriver(remoteUrl(config), capabilities);
         remoteDriver.setFileDetector(new LocalFileDetector());
         return remoteDriver;
     }
@@ -80,9 +142,5 @@ public final class DriverFactory {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Invalid Selenium Grid URL: " + config.seleniumGridUrl(), e);
         }
-    }
-
-    private static @NotNull RemoteWebDriver unsupportedBrowser(@NotNull String browser, @NotNull String reason) {
-        throw new UnsupportedOperationException("Browser is not supported yet: " + browser + ". " + reason + ".");
     }
 }
