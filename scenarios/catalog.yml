@@ -144,6 +144,11 @@ scenarios:
     priority: P0
     tags: [http]
     coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-BROKENIMG-001
+    title: Broken images expose failed resource responses
+    priority: P0
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
   - id: UI-NOTIFY-001
     title: Notification message flash shows expected messages
     priority: P1
