@@ -83,7 +83,7 @@ scenarios:
     title: File upload shows the uploaded file
     priority: P0
     tags: [smoke]
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DOWNLOAD-001
     title: File download retrieves the expected content
     priority: P1
