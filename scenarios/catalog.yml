@@ -23,7 +23,7 @@ scenarios:
     title: Checkboxes toggle on and off
     priority: P0
     tags: [smoke]
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-CONTEXT-001
     title: Context menu opens the expected alert
     priority: P1
