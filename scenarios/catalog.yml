@@ -8,12 +8,12 @@ scenarios:
     title: Login rejects an invalid username
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-LOGIN-003
     title: Login rejects an invalid password
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-ADDREMOVE-001
     title: Add and remove buttons update the dynamic DOM
     priority: P0
