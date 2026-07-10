@@ -10,7 +10,6 @@ import theinternetwebsite.ui.driver.DriverFactory;
 import theinternetwebsite.ui.driver.TestRunConfig;
 import theinternetwebsite.ui.support.BrowserActions;
 import theinternetwebsite.ui.support.BrowserWaits;
-import theinternetwebsite.ui.support.HttpFileDownloader;
 import theinternetwebsite.ui.support.TextContent;
 
 public class UITest {
@@ -19,9 +18,9 @@ public class UITest {
     public static final String downloadsFolder = DriverFactory.DOWNLOADS_FOLDER;
 
     private final DriverFactory driverFactory = new DriverFactory();
-    private TestRunConfig config;
-    private RemoteWebDriver driver;
-    private BrowserWaits waits;
+    private final ThreadLocal<TestRunConfig> config = new ThreadLocal<>();
+    private final ThreadLocal<RemoteWebDriver> driver = new ThreadLocal<>();
+    private final ThreadLocal<BrowserWaits> waits = new ThreadLocal<>();
 
     public UITest() { }
 
@@ -35,18 +34,24 @@ public class UITest {
             @NotNull String baseUrlSG,
             @NotNull String remoteUrl,
             @NotNull String useSeleniumGrid) {
-        config = TestRunConfig.from(browser, browserVersion, headless, baseUrl, baseUrlSG, remoteUrl, useSeleniumGrid);
-        driver = driverFactory.create(config);
-        waits = new BrowserWaits(driver);
+        TestRunConfig runConfig = TestRunConfig.from(browser, browserVersion, headless, baseUrl, baseUrlSG, remoteUrl, useSeleniumGrid);
+        RemoteWebDriver runDriver = driverFactory.create(runConfig);
+        config.set(runConfig);
+        driver.set(runDriver);
+        waits.set(new BrowserWaits(runDriver));
     }
 
     @AfterTest
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-            driver = null;
-            waits = null;
-            config = null;
+        RemoteWebDriver currentDriver = driver.get();
+        try {
+            if (currentDriver != null) {
+                currentDriver.quit();
+            }
+        } finally {
+            driver.remove();
+            waits.remove();
+            config.remove();
         }
     }
 
@@ -63,17 +68,19 @@ public class UITest {
     }
 
     public @NotNull RemoteWebDriver getDriver() {
-        if (driver == null) {
+        RemoteWebDriver currentDriver = driver.get();
+        if (currentDriver == null) {
             throw new IllegalStateException("WebDriver is not initialized. Check the TestNG setup parameters.");
         }
-        return driver;
+        return currentDriver;
     }
 
     public @NotNull BrowserWaits waits() {
-        if (waits == null) {
+        BrowserWaits currentWaits = waits.get();
+        if (currentWaits == null) {
             throw new IllegalStateException("Browser waits are not initialized. Check the WebDriver lifecycle.");
         }
-        return waits;
+        return currentWaits;
     }
 
     public @NotNull String getBaseUrl() {
@@ -109,14 +116,11 @@ public class UITest {
         return activeConfig().browser();
     }
 
-    public void downloadFileHeadless(@NotNull String fileUrl, @NotNull String localFilePath) {
-        HttpFileDownloader.download(fileUrl, localFilePath);
-    }
-
     private @NotNull TestRunConfig activeConfig() {
-        if (config == null) {
+        TestRunConfig currentConfig = config.get();
+        if (currentConfig == null) {
             throw new IllegalStateException("Test run config is not initialized. Check the TestNG setup parameters.");
         }
-        return config;
+        return currentConfig;
     }
 }
