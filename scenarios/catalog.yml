@@ -99,6 +99,11 @@ scenarios:
     priority: P0
     tags: []
     coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+  - id: UI-INPUT-001
+    title: Numeric input accepts keyboard data
+    priority: P0
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
   - id: UI-HOVERS-001
     title: Hovering reveals user details
     priority: P1
