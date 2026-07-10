@@ -20,7 +20,7 @@ public class JavascriptErrorPage {
     public JavascriptErrorPage(UITest caller) {
         this.caller = caller;
         WebDriverWait pageFactoryInitWait = new WebDriverWait(this.caller.getDriver(), Duration.ofSeconds(10), Duration.ofSeconds(5));
-        this.pageUrl = this.caller.getBaseUrl() + "//javascript_error";
+        this.pageUrl = this.caller.getBaseUrl() + "/javascript_error";
         this.caller.getDriver().get(this.pageUrl);
         PageFactory.initElements(this.caller.getDriver(), this);
         pageFactoryInitWait.until(ExpectedConditions.visibilityOf(this.pageErrorMessage));
