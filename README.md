@@ -30,7 +30,7 @@ This repository is an educational automation playbook for [The Internet](https:/
 Start the demo app:
 
 ```bash
-docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:latest
+docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:v2.6.5
 ```
 
 Run the tests:

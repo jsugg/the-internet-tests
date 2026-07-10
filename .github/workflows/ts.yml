@@ -1,0 +1,111 @@
+name: TypeScript
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - stacks/ts-playwright/**
+      - scenarios/**
+      - tools/**
+      - .github/workflows/ts.yml
+  push:
+    branches:
+      - master
+    paths:
+      - stacks/ts-playwright/**
+      - scenarios/**
+      - tools/**
+      - .github/workflows/ts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    name: TypeScript ${{ matrix.project }} ${{ matrix.slice }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            slice: regression
+            grep: ''
+            grep-invert: '@not-ci|@flaky-demo'
+            artifact-name: ts-chromium-artifacts
+          - project: firefox
+            slice: regression
+            grep: ''
+            grep-invert: '@http|@not-ci|@flaky-demo'
+            artifact-name: ts-firefox-artifacts
+          - project: webkit
+            slice: regression
+            grep: ''
+            grep-invert: '@http|@not-ci|@flaky-demo'
+            artifact-name: ts-webkit-artifacts
+          - project: Mobile Chrome
+            slice: mobile-emulation
+            grep: '@mobile-emulation'
+            grep-invert: '@desktop|@not-ci|@flaky-demo'
+            artifact-name: ts-mobile-chrome-artifacts
+          - project: Mobile Safari
+            slice: mobile-emulation
+            grep: '@mobile-emulation'
+            grep-invert: '@desktop|@not-ci|@flaky-demo'
+            artifact-name: ts-mobile-safari-artifacts
+
+    services:
+      website:
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
+        ports:
+          - 7080:5000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: stacks/ts-playwright/package-lock.json
+
+      - name: Install TypeScript stack dependencies
+        working-directory: stacks/ts-playwright
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: stacks/ts-playwright
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Run TypeScript Playwright slice
+        working-directory: stacks/ts-playwright
+        env:
+          THE_INTERNET_BASE_URL: http://localhost:7080
+          PW_PROJECT: ${{ matrix.project }}
+          PW_GREP: ${{ matrix.grep }}
+          PW_GREP_INVERT: ${{ matrix.grep-invert }}
+        run: |
+          args=(--project "$PW_PROJECT" --pass-with-no-tests)
+          if [ -n "$PW_GREP" ]; then
+            args+=(--grep "$PW_GREP")
+          fi
+          if [ -n "$PW_GREP_INVERT" ]; then
+            args+=(--grep-invert "$PW_GREP_INVERT")
+          fi
+          npx playwright test "${args[@]}"
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: |
+            stacks/ts-playwright/playwright-report/
+            stacks/ts-playwright/test-results/
+          if-no-files-found: ignore
