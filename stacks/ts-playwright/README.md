@@ -7,6 +7,7 @@ Playwright coverage for the shared scenario catalog. This stack currently starts
 - Node.js 22.13 or newer
 - npm
 - Docker, when running against the local The Internet app container
+- Docker Compose
 
 ## Install
 
@@ -20,7 +21,7 @@ npx playwright install --with-deps chromium
 Start the demo app from the repository root:
 
 ```bash
-docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:v2.6.5
+docker compose -f docker/compose.yml up -d website
 ```
 
 Run the smoke scenario:
@@ -40,7 +41,7 @@ npm run format:check
 Stop the demo app when finished:
 
 ```bash
-docker stop the-internet
+docker compose -f docker/compose.yml down
 ```
 
 ## Browser projects

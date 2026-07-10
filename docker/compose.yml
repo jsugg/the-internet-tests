@@ -1,0 +1,7 @@
+name: the-internet-tests
+
+services:
+  website:
+    image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
+    ports:
+      - "7080:5000"

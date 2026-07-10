@@ -7,16 +7,17 @@ Java implementation of The Internet UI scenarios using Selenium WebDriver, TestN
 - Java 25 LTS
 - Maven 3.9 or newer
 - Docker
+- Docker Compose
 - Chrome or Chromium
 
 Selenium Manager provisions browser drivers automatically through Selenium. WebDriverManager is a common alternative worth comparing when learning the ecosystem, but this stack does not need it at runtime.
 
 ## Run locally
 
-Start The Internet demo app:
+Start The Internet demo app from the repository root:
 
 ```bash
-docker run --rm -d --name the-internet -p 7080:5000 gprestes/the-internet:v2.6.5
+docker compose -f docker/compose.yml up -d website
 ```
 
 Run the suite:
@@ -28,15 +29,38 @@ mvn test
 Stop the app:
 
 ```bash
-docker stop the-internet
+docker compose -f docker/compose.yml down
 ```
 
-## Legacy runner
+## Optional local Selenium Grid
 
-The `./run` script is retained temporarily for existing users. It can still start the app, local Chrome runs, and the old Selenium Grid path, but Docker Compose becomes the supported entrypoint in a later phase.
+The retired `./run` script previously bundled app startup, Grid startup, and Maven execution. Docker Compose now owns local containers, while Maven stays the test entrypoint.
+
+Start the app plus local Grid from the repository root:
 
 ```bash
-./run -h
+docker compose -f docker/compose.yml -f docker/compose.grid.yml up -d
+```
+
+Run against the Grid:
+
+```bash
+mvn -P CLI_Parameters test \
+  -DsuiteXmlFile=src/test/resources/regression.xml \
+  -Dbrowser=remote-chrome \
+  -DbrowserVersion= \
+  -DheadlessBrowser=true \
+  -DuseSeleniumGrid=true \
+  -DtestsThreadCount=1 \
+  -DtestRunnerAddress=http://website:5000 \
+  -DwebAppAddress=http://localhost:7080 \
+  -DseleniumGridAddress=http://localhost:4444/wd/hub
+```
+
+Stop all Compose services:
+
+```bash
+docker compose -f docker/compose.yml -f docker/compose.grid.yml down
 ```
 
 ## Reports
