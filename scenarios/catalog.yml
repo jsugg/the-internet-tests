@@ -63,17 +63,17 @@ scenarios:
     title: Dynamic controls remove and add a checkbox
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DYNCTRL-002
     title: Dynamic controls checkbox toggles
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DYNCTRL-003
     title: Dynamic controls enable and disable a textbox
     priority: P0
     tags: [smoke]
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DYNLOAD-001
     title: Dynamic loading reveals the success message
     priority: P0
