@@ -30,7 +30,7 @@ public class LoginTest extends UITest {
         Assert.assertTrue(loginFormPage.isPageOpen(), "Page not open");
 
         // Validate login succeeded
-        this.login(username, password);
+        this.login(loginFormPage, username, password);
         new WebDriverWait(this.getDriver(), Duration.ofSeconds(10))
                 .until(ExpectedConditions.urlToBe(loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL));
         Assert.assertEquals(this.getDriver().getCurrentUrl(), loginFormPage.EXPECTED_LOGGED_IN_PAGE_URL);
@@ -65,7 +65,10 @@ public class LoginTest extends UITest {
     }
 
     private @NotNull LoginFormPage login(String username, String password) {
-        LoginFormPage loginFormPage = new LoginFormPage(this);
+        return this.login(new LoginFormPage(this), username, password);
+    }
+
+    private @NotNull LoginFormPage login(LoginFormPage loginFormPage, String username, String password) {
         loginFormPage.setUsername(username);
         loginFormPage.setPassword(password);
         loginFormPage.clickLoginButton();
