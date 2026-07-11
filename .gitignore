@@ -64,6 +64,14 @@ hs_err_pid*
 # ENV files
 *.ENV
 
+__pycache__/
+*.py[cod]
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+
 .local/
 .serena/
 artifacts/

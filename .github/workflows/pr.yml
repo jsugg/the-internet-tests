@@ -192,3 +192,69 @@ jobs:
           name: ts-smoke-${{ github.run_id }}-playwright
           path: artifacts/ts/${{ github.run_id }}/smoke/
           if-no-files-found: ignore
+
+  py-fast:
+    name: Python typecheck and smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    services:
+      website:
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
+        ports:
+          - 7080:5000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: stacks/python-playwright/pyproject.toml
+
+      - name: Install Python stack dependencies
+        working-directory: stacks/python-playwright
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Lint Python stack
+        working-directory: stacks/python-playwright
+        run: ruff check .
+
+      - name: Check Python stack formatting
+        working-directory: stacks/python-playwright
+        run: ruff format --check .
+
+      - name: Type-check Python stack
+        working-directory: stacks/python-playwright
+        run: mypy src tests
+
+      - name: Install Chromium browser
+        working-directory: stacks/python-playwright
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run Python Chromium smoke
+        working-directory: stacks/python-playwright
+        env:
+          THE_INTERNET_BASE_URL: http://localhost:7080
+        run: >-
+          pytest
+          -m smoke
+          --browser chromium
+          --tracing retain-on-failure
+          --screenshot only-on-failure
+          --video retain-on-failure
+          --output ../../artifacts/py/${{ github.run_id }}/smoke/test-results
+          --junitxml ../../artifacts/py/${{ github.run_id }}/smoke/junit.xml
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: py-smoke-${{ github.run_id }}-playwright
+          path: artifacts/py/${{ github.run_id }}/smoke/
+          if-no-files-found: ignore
