@@ -3,7 +3,7 @@ scenarios:
     title: Login succeeds with valid credentials
     priority: P0
     tags: [smoke]
-    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: true}
   - id: UI-LOGIN-002
     title: Login rejects an invalid username
     priority: P0

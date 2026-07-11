@@ -183,3 +183,157 @@ jobs:
           name: ts-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
           path: artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/
           if-no-files-found: ignore
+
+  py-nightly:
+    name: Python ${{ matrix.project }} nightly
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            browser: chromium
+            install_target: chromium
+            channel: ''
+            device: ''
+            marker_expr: not not_ci
+            artifact_slice: nightly-chromium
+          - project: firefox
+            browser: firefox
+            install_target: firefox
+            channel: ''
+            device: ''
+            marker_expr: not http and not not_ci
+            artifact_slice: nightly-firefox
+          - project: webkit
+            browser: webkit
+            install_target: webkit
+            channel: ''
+            device: ''
+            marker_expr: not http and not not_ci
+            artifact_slice: nightly-webkit
+          - project: chrome
+            browser: chromium
+            install_target: chrome
+            channel: chrome
+            device: ''
+            marker_expr: not http and not not_ci
+            artifact_slice: nightly-chrome
+          - project: msedge
+            browser: chromium
+            install_target: msedge
+            channel: msedge
+            device: ''
+            marker_expr: not http and not not_ci
+            artifact_slice: nightly-msedge
+          - project: Mobile Chrome
+            browser: chromium
+            install_target: chromium
+            channel: ''
+            device: Pixel 5
+            marker_expr: not desktop and not http and not not_ci
+            artifact_slice: nightly-mobile-chrome
+          - project: Mobile Safari
+            browser: webkit
+            install_target: webkit
+            channel: ''
+            device: iPhone 12
+            marker_expr: not desktop and not http and not not_ci
+            artifact_slice: nightly-mobile-safari
+
+    services:
+      website:
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
+        ports:
+          - 7080:5000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: stacks/python-playwright/pyproject.toml
+
+      - name: Install Python stack dependencies
+        working-directory: stacks/python-playwright
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Plan Python nightly slice
+        id: slice
+        working-directory: stacks/python-playwright
+        env:
+          INCLUDE_FLAKY_DEMO: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.include-flaky-demo == 'true' }}
+          PYTEST_BROWSER: ${{ matrix.browser }}
+          PYTEST_CHANNEL: ${{ matrix.channel }}
+          PYTEST_DEVICE: ${{ matrix.device }}
+          PYTEST_MARKERS: ${{ matrix.marker_expr }}
+        run: |
+          marker_expr="$PYTEST_MARKERS"
+          if [ "$INCLUDE_FLAKY_DEMO" != "true" ]; then
+            marker_expr="($marker_expr) and not flaky_demo"
+          fi
+          args=(--collect-only -q --browser "$PYTEST_BROWSER" -m "$marker_expr")
+          if [ -n "$PYTEST_CHANNEL" ]; then
+            args+=(--browser-channel "$PYTEST_CHANNEL")
+          fi
+          if [ -n "$PYTEST_DEVICE" ]; then
+            args+=(--device "$PYTEST_DEVICE")
+          fi
+          set +e
+          pytest "${args[@]}" | tee /tmp/pytest-list.txt
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ] && [ "$status" -ne 5 ]; then
+            exit "$status"
+          fi
+          count=$(grep -c '^tests/.*::' /tmp/pytest-list.txt || true)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$marker_expr" > /tmp/pytest-marker-expr.txt
+
+      - name: Install Playwright browser
+        if: steps.slice.outputs.count != '0'
+        working-directory: stacks/python-playwright
+        run: python -m playwright install --with-deps ${{ matrix.install_target }}
+
+      - name: Run Python nightly slice
+        if: steps.slice.outputs.count != '0'
+        working-directory: stacks/python-playwright
+        env:
+          THE_INTERNET_BASE_URL: http://localhost:7080
+          PYTEST_BROWSER: ${{ matrix.browser }}
+          PYTEST_CHANNEL: ${{ matrix.channel }}
+          PYTEST_DEVICE: ${{ matrix.device }}
+        run: |
+          marker_expr=$(cat /tmp/pytest-marker-expr.txt)
+          args=(
+            --browser "$PYTEST_BROWSER"
+            -m "$marker_expr"
+            --tracing "retain-on-failure"
+            --screenshot "only-on-failure"
+            --video "retain-on-failure"
+            --output "../../artifacts/py/${GITHUB_RUN_ID}/${{ matrix.artifact_slice }}/test-results"
+            --junitxml "../../artifacts/py/${GITHUB_RUN_ID}/${{ matrix.artifact_slice }}/junit.xml"
+          )
+          if [ -n "$PYTEST_CHANNEL" ]; then
+            args+=(--browser-channel "$PYTEST_CHANNEL")
+          fi
+          if [ -n "$PYTEST_DEVICE" ]; then
+            args+=(--device "$PYTEST_DEVICE")
+          fi
+          pytest "${args[@]}"
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: py-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
+          path: artifacts/py/${{ github.run_id }}/${{ matrix.artifact_slice }}/
+          if-no-files-found: ignore

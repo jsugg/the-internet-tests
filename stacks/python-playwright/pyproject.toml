@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "the-internet-tests-python-playwright"
+version = "0.1.0"
+description = "Pytest Playwright examples for The Internet automation playbook."
+readme = "README.md"
+requires-python = ">=3.14"
+license = "MIT"
+
+[project.optional-dependencies]
+dev = [
+  "mypy==2.2.0",
+  "playwright==1.61.0",
+  "pytest==9.1.1",
+  "pytest-playwright==0.8.0",
+  "ruff==0.15.21",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--strict-markers"]
+markers = [
+  "desktop: desktop-only browser scenarios",
+  "flaky_demo: intentionally unstable flake-lab scenarios",
+  "http: HTTP/resource-layer scenarios",
+  "mobile_emulation: scenarios eligible for mobile device emulation",
+  "not_ci: local-only scenarios excluded from scheduled CI",
+  "smoke: fast PR smoke scenarios",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "PT", "RUF", "UP"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+mypy_path = "src"
+files = ["src", "tests"]

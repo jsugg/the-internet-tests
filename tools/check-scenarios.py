@@ -7,6 +7,7 @@ from pathlib import Path
 CATALOG = Path("scenarios/catalog.yml")
 JAVA = Path("stacks/java-selenium-testng/src/test/java/theinternetwebsite/ui/testcases")
 TS = Path("stacks/ts-playwright/tests")
+PY = Path("stacks/python-playwright/tests")
 MATRIX = Path("docs/scenario-matrix.md")
 STACKS = ("java-selenium-testng", "ts-playwright", "python-playwright")
 SCENARIO_ID = r"(?:UI|HTTP)-[A-Z0-9-]+"
@@ -31,10 +32,15 @@ def ts_ids() -> set[str]:
     text = "\n".join(p.read_text() for p in TS.glob("**/*.ts")) if TS.exists() else ""
     return set(re.findall(rf"\b({SCENARIO_ID})\b", text))
 
+def py_ids() -> set[str]:
+    text = "\n".join(p.read_text() for p in PY.glob("**/*.py")) if PY.exists() else ""
+    return set(re.findall(rf"\b({SCENARIO_ID})\b", text))
+
 def check(rows: list[dict[str, object]]) -> None:
-    ids = [str(r["id"]) for r in rows]; all_ids = set(ids); java_tests = java_ids(); ts_tests = ts_ids()
+    ids = [str(r["id"]) for r in rows]; all_ids = set(ids); java_tests = java_ids(); ts_tests = ts_ids(); py_tests = py_ids()
     java_catalog = {str(r["id"]) for r in rows if dict(r["coverage"])["java-selenium-testng"] == "true"}
     ts_catalog = {str(r["id"]) for r in rows if dict(r["coverage"])["ts-playwright"] == "true"}
+    py_catalog = {str(r["id"]) for r in rows if dict(r["coverage"])["python-playwright"] == "true"}
     errors = []
     errors += [f"duplicate catalog ids: {sorted({i for i in ids if ids.count(i) > 1})}"] if len(ids) != len(all_ids) else []
     errors += [f"catalog java ids missing tests: {sorted(java_catalog - java_tests)}"] if java_catalog - java_tests else []
@@ -43,6 +49,9 @@ def check(rows: list[dict[str, object]]) -> None:
     errors += [f"catalog ts ids missing tests: {sorted(ts_catalog - ts_tests)}"] if ts_catalog - ts_tests else []
     errors += [f"ts test ids missing catalog rows: {sorted(ts_tests - all_ids)}"] if ts_tests - all_ids else []
     errors += [f"ts test ids not marked covered: {sorted(ts_tests - ts_catalog)}"] if ts_tests - ts_catalog else []
+    errors += [f"catalog py ids missing tests: {sorted(py_catalog - py_tests)}"] if py_catalog - py_tests else []
+    errors += [f"py test ids missing catalog rows: {sorted(py_tests - all_ids)}"] if py_tests - all_ids else []
+    errors += [f"py test ids not marked covered: {sorted(py_tests - py_catalog)}"] if py_tests - py_catalog else []
     if errors: sys.exit("\n".join(errors))
 
 def write_matrix(rows: list[dict[str, object]]) -> None:
@@ -55,4 +64,4 @@ def write_matrix(rows: list[dict[str, object]]) -> None:
 parser = argparse.ArgumentParser(); parser.add_argument("--write-matrix", action="store_true")
 args = parser.parse_args(); rows = catalog(); check(rows)
 if args.write_matrix: write_matrix(rows)
-print(f"scenario catalog ok: {len(rows)} rows, {len(java_ids())} java tests, {len(ts_ids())} ts tests")
+print(f"scenario catalog ok: {len(rows)} rows, {len(java_ids())} java tests, {len(ts_ids())} ts tests, {len(py_ids())} py tests")

@@ -1,0 +1,150 @@
+name: Python
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - stacks/python-playwright/**
+      - scenarios/**
+      - tools/**
+      - .github/workflows/python.yml
+  push:
+    branches:
+      - master
+    paths:
+      - stacks/python-playwright/**
+      - scenarios/**
+      - tools/**
+      - .github/workflows/python.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    name: Python ${{ matrix.project }} ${{ matrix.slice }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            browser: chromium
+            install_target: chromium
+            device: ''
+            slice: regression
+            marker_expr: not not_ci and not flaky_demo
+            artifact_slice: chromium
+          - project: firefox
+            browser: firefox
+            install_target: firefox
+            device: ''
+            slice: regression
+            marker_expr: not http and not not_ci and not flaky_demo
+            artifact_slice: firefox
+          - project: webkit
+            browser: webkit
+            install_target: webkit
+            device: ''
+            slice: regression
+            marker_expr: not http and not not_ci and not flaky_demo
+            artifact_slice: webkit
+          - project: Mobile Chrome
+            browser: chromium
+            install_target: chromium
+            device: Pixel 5
+            slice: mobile-emulation
+            marker_expr: mobile_emulation and not desktop and not not_ci and not flaky_demo
+            artifact_slice: mobile-chrome
+          - project: Mobile Safari
+            browser: webkit
+            install_target: webkit
+            device: iPhone 12
+            slice: mobile-emulation
+            marker_expr: mobile_emulation and not desktop and not not_ci and not flaky_demo
+            artifact_slice: mobile-safari
+
+    services:
+      website:
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
+        ports:
+          - 7080:5000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: stacks/python-playwright/pyproject.toml
+
+      - name: Install Python stack dependencies
+        working-directory: stacks/python-playwright
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Plan Python Playwright slice
+        id: slice
+        working-directory: stacks/python-playwright
+        env:
+          PYTEST_BROWSER: ${{ matrix.browser }}
+          PYTEST_DEVICE: ${{ matrix.device }}
+          PYTEST_MARKERS: ${{ matrix.marker_expr }}
+        run: |
+          args=(--collect-only -q --browser "$PYTEST_BROWSER" -m "$PYTEST_MARKERS")
+          if [ -n "$PYTEST_DEVICE" ]; then
+            args+=(--device "$PYTEST_DEVICE")
+          fi
+          set +e
+          pytest "${args[@]}" | tee /tmp/pytest-list.txt
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ] && [ "$status" -ne 5 ]; then
+            exit "$status"
+          fi
+          count=$(grep -c '^tests/.*::' /tmp/pytest-list.txt || true)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Install Playwright browser
+        if: steps.slice.outputs.count != '0'
+        working-directory: stacks/python-playwright
+        run: python -m playwright install --with-deps ${{ matrix.install_target }}
+
+      - name: Run Python Playwright slice
+        if: steps.slice.outputs.count != '0'
+        working-directory: stacks/python-playwright
+        env:
+          THE_INTERNET_BASE_URL: http://localhost:7080
+          PYTEST_BROWSER: ${{ matrix.browser }}
+          PYTEST_DEVICE: ${{ matrix.device }}
+          PYTEST_MARKERS: ${{ matrix.marker_expr }}
+        run: |
+          args=(
+            --browser "$PYTEST_BROWSER"
+            -m "$PYTEST_MARKERS"
+            --tracing "retain-on-failure"
+            --screenshot "only-on-failure"
+            --video "retain-on-failure"
+            --output "../../artifacts/py/${GITHUB_RUN_ID}/${{ matrix.artifact_slice }}/test-results"
+            --junitxml "../../artifacts/py/${GITHUB_RUN_ID}/${{ matrix.artifact_slice }}/junit.xml"
+          )
+          if [ -n "$PYTEST_DEVICE" ]; then
+            args+=(--device "$PYTEST_DEVICE")
+          fi
+          pytest "${args[@]}"
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: py-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
+          path: artifacts/py/${{ github.run_id }}/${{ matrix.artifact_slice }}/
+          if-no-files-found: ignore
