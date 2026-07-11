@@ -1,8 +1,8 @@
 # Python Playwright stack
 
-Pytest + Playwright coverage for the shared scenario catalog. This stack starts
-with the Python smoke scenario and grows through the P0 suite in the Phase 7
-follow-up PRs.
+Pytest + Playwright coverage for the shared scenario catalog. This stack covers
+the first Python P0 UI batch and grows through the remaining P0 suite in the
+Phase 7 follow-up PR.
 
 ## Prerequisites
 
