@@ -37,31 +37,31 @@ jobs:
             slice: regression
             grep: ''
             grep-invert: '@not-ci|@flaky-demo'
-            artifact-name: ts-chromium-artifacts
+            artifact_slice: chromium
           - project: firefox
             browser: firefox
             slice: regression
             grep: ''
             grep-invert: '@http|@not-ci|@flaky-demo'
-            artifact-name: ts-firefox-artifacts
+            artifact_slice: firefox
           - project: webkit
             browser: webkit
             slice: regression
             grep: ''
             grep-invert: '@http|@not-ci|@flaky-demo'
-            artifact-name: ts-webkit-artifacts
+            artifact_slice: webkit
           - project: Mobile Chrome
             browser: chromium
             slice: mobile-emulation
             grep: '@mobile-emulation'
             grep-invert: '@desktop|@not-ci|@flaky-demo'
-            artifact-name: ts-mobile-chrome-artifacts
+            artifact_slice: mobile-chrome
           - project: Mobile Safari
             browser: webkit
             slice: mobile-emulation
             grep: '@mobile-emulation'
             grep-invert: '@desktop|@not-ci|@flaky-demo'
-            artifact-name: ts-mobile-safari-artifacts
+            artifact_slice: mobile-safari
 
     services:
       website:
@@ -116,6 +116,8 @@ jobs:
           PW_PROJECT: ${{ matrix.project }}
           PW_GREP: ${{ matrix.grep }}
           PW_GREP_INVERT: ${{ matrix.grep-invert }}
+          PLAYWRIGHT_HTML_REPORT: ../../artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/html-report
+          PLAYWRIGHT_TEST_RESULTS: ../../artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/test-results
         run: |
           args=(--project "$PW_PROJECT" --pass-with-no-tests)
           if [ -n "$PW_GREP" ]; then
@@ -130,8 +132,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact-name }}
-          path: |
-            stacks/ts-playwright/playwright-report/
-            stacks/ts-playwright/test-results/
+          name: ts-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
+          path: artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/
           if-no-files-found: ignore

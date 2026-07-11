@@ -58,12 +58,21 @@ jobs:
           -DtestRunnerAddress=http://localhost:7080
           -DseleniumGridAddress=http://localhost:4444/wd/hub
 
+      - name: Stage Java reports
+        if: always()
+        run: |
+          report_dir="artifacts/java/${GITHUB_RUN_ID}/nightly-${{ matrix.browser }}/surefire-reports"
+          mkdir -p "$report_dir"
+          if [ -d stacks/java-selenium-testng/target/surefire-reports ]; then
+            find stacks/java-selenium-testng/target/surefire-reports -name '*.xml' -exec cp {} "$report_dir/" \;
+          fi
+
       - name: Upload Surefire XML
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: nightly-java-${{ matrix.browser }}-surefire-xml
-          path: stacks/java-selenium-testng/target/surefire-reports/**/*.xml
+          name: java-nightly-${{ matrix.browser }}-${{ github.run_id }}-surefire-xml
+          path: artifacts/java/${{ github.run_id }}/nightly-${{ matrix.browser }}/
           if-no-files-found: warn
 
   ts-nightly:
@@ -78,31 +87,31 @@ jobs:
           - project: chromium
             browser: chromium
             grep-invert: "@not-ci"
-            artifact-name: nightly-ts-chromium-artifacts
+            artifact_slice: nightly-chromium
           - project: firefox
             browser: firefox
             grep-invert: "@http|@not-ci"
-            artifact-name: nightly-ts-firefox-artifacts
+            artifact_slice: nightly-firefox
           - project: webkit
             browser: webkit
             grep-invert: "@http|@not-ci"
-            artifact-name: nightly-ts-webkit-artifacts
+            artifact_slice: nightly-webkit
           - project: chrome
             browser: chrome
             grep-invert: "@http|@not-ci"
-            artifact-name: nightly-ts-chrome-artifacts
+            artifact_slice: nightly-chrome
           - project: msedge
             browser: msedge
             grep-invert: "@http|@not-ci"
-            artifact-name: nightly-ts-msedge-artifacts
+            artifact_slice: nightly-msedge
           - project: Mobile Chrome
             browser: chromium
             grep-invert: "@desktop|@http|@not-ci"
-            artifact-name: nightly-ts-mobile-chrome-artifacts
+            artifact_slice: nightly-mobile-chrome
           - project: Mobile Safari
             browser: webkit
             grep-invert: "@desktop|@http|@not-ci"
-            artifact-name: nightly-ts-mobile-safari-artifacts
+            artifact_slice: nightly-mobile-safari
 
     services:
       website:
@@ -157,6 +166,8 @@ jobs:
         env:
           THE_INTERNET_BASE_URL: http://localhost:7080
           PW_PROJECT: ${{ matrix.project }}
+          PLAYWRIGHT_HTML_REPORT: ../../artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/html-report
+          PLAYWRIGHT_TEST_RESULTS: ../../artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/test-results
         run: |
           args=(--project "$PW_PROJECT" --pass-with-no-tests)
           grep_invert=$(cat /tmp/playwright-grep-invert.txt)
@@ -169,8 +180,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact-name }}
-          path: |
-            stacks/ts-playwright/playwright-report/
-            stacks/ts-playwright/test-results/
+          name: ts-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
+          path: artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/
           if-no-files-found: ignore
