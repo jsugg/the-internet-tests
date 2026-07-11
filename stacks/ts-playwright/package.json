@@ -9,6 +9,7 @@
   "scripts": {
     "test": "playwright test",
     "test:chromium": "playwright test --project=chromium",
+    "test:chromium:http": "playwright test --project=chromium --grep @http",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format:check": "prettier --check .",

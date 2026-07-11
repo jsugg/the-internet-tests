@@ -1,6 +1,6 @@
 # TypeScript Playwright stack
 
-Playwright coverage for the shared scenario catalog. This stack currently starts with the `UI-LOGIN-001` smoke scenario and is expanded in later roadmap PRs.
+Playwright coverage for the shared scenario catalog. This stack covers the TypeScript P0 UI suite and Chromium-only HTTP/resource checks.
 
 ## Prerequisites
 
@@ -30,6 +30,12 @@ Run the smoke scenario:
 THE_INTERNET_BASE_URL=http://localhost:7080 npm run test:chromium:smoke
 ```
 
+Run the HTTP/resource slice:
+
+```bash
+THE_INTERNET_BASE_URL=http://localhost:7080 npm run test:chromium:http
+```
+
 Run static checks:
 
 ```bash
@@ -46,4 +52,4 @@ docker compose -f docker/compose.yml down
 
 ## Browser projects
 
-`playwright.config.ts` defines desktop Chromium, Firefox, WebKit, branded Chrome and Edge channels, Mobile Chrome, and Mobile Safari projects. PR CI runs only the Chromium smoke project to keep feedback fast.
+`playwright.config.ts` defines desktop Chromium, Firefox, WebKit, branded Chrome and Edge channels, Mobile Chrome, and Mobile Safari projects. PR CI runs only the Chromium smoke project to keep feedback fast. The TypeScript full gate runs `@http` tests on Chromium only because HTTP/resource checks do not exercise rendering engines.

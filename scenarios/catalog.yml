@@ -88,7 +88,7 @@ scenarios:
     title: File download retrieves the expected content
     priority: P1
     tags: [http]
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-FLOATING-001
     title: Floating menu remains visible while scrolling
     priority: P1
@@ -142,6 +142,21 @@ scenarios:
   - id: HTTP-REDIRECT-001
     title: Redirect endpoint reaches the status codes page
     priority: P0
+    tags: [http]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: HTTP-BASICAUTH-001
+    title: Basic authentication accepts valid credentials
+    priority: P1
+    tags: [http]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: HTTP-DIGESTAUTH-001
+    title: Digest authentication accepts valid credentials
+    priority: P1
+    tags: [http]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: HTTP-SLOW-001
+    title: Slow resources fail with a bounded timeout
+    priority: P2
     tags: [http]
     coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
   - id: UI-BROKENIMG-001
