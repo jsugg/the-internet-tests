@@ -1,8 +1,7 @@
 # Python Playwright stack
 
 Pytest + Playwright coverage for the shared scenario catalog. This stack covers
-the first Python P0 UI batch and grows through the remaining P0 suite in the
-Phase 7 follow-up PR.
+the Python P0 UI suite and Chromium-only HTTP/resource checks.
 
 ## Prerequisites
 
@@ -33,6 +32,12 @@ Run the smoke scenario:
 
 ```bash
 THE_INTERNET_BASE_URL=http://localhost:7080 pytest -m smoke --browser chromium
+```
+
+Run the HTTP/resource slice:
+
+```bash
+THE_INTERNET_BASE_URL=http://localhost:7080 pytest -m http --browser chromium
 ```
 
 Run static checks:

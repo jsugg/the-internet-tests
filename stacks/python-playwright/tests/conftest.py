@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 
 import pytest
+from playwright.sync_api import APIRequestContext, Playwright
 
 from the_internet_tests.config import AppConfig, load_config
 
@@ -19,6 +20,19 @@ def app_config() -> AppConfig:
 def app_base_url(app_config: AppConfig) -> str:
     """Return The Internet base URL without a trailing slash."""
     return app_config.base_url
+
+
+@pytest.fixture
+def api_request(
+    playwright: Playwright,
+    app_config: AppConfig,
+) -> Generator[APIRequestContext]:
+    """Return an isolated API request context for The Internet."""
+    request_context = playwright.request.new_context(base_url=app_config.base_url)
+    try:
+        yield request_context
+    finally:
+        request_context.dispose()
 
 
 @pytest.fixture(scope="session")
