@@ -8,12 +8,12 @@ scenarios:
     title: Login rejects an invalid username
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: true}
   - id: UI-LOGIN-003
     title: Login rejects an invalid password
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: true}
   - id: UI-ADDREMOVE-001
     title: Add and remove buttons update the dynamic DOM
     priority: P0
@@ -83,12 +83,12 @@ scenarios:
     title: File upload shows the uploaded file
     priority: P0
     tags: [smoke]
-    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: true}
   - id: UI-DOWNLOAD-001
     title: File download retrieves the expected content
     priority: P1
     tags: [http]
-    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: true}
   - id: UI-FLOATING-001
     title: Floating menu remains visible while scrolling
     priority: P1
@@ -98,7 +98,7 @@ scenarios:
     title: iFrame editor supports context switching
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: true}
   - id: UI-INPUT-001
     title: Numeric input accepts keyboard data
     priority: P0
@@ -133,37 +133,37 @@ scenarios:
     title: Link opens expected content in a new tab
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: true}
   - id: HTTP-STATUS-001
     title: Status code endpoints return expected responses
     priority: P0
     tags: [http]
-    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: true}
   - id: HTTP-REDIRECT-001
     title: Redirect endpoint reaches the status codes page
     priority: P0
     tags: [http]
-    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: true}
   - id: HTTP-BASICAUTH-001
     title: Basic authentication accepts valid credentials
     priority: P1
     tags: [http]
-    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: true}
   - id: HTTP-DIGESTAUTH-001
     title: Digest authentication accepts valid credentials
     priority: P1
     tags: [http]
-    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: true}
   - id: HTTP-SLOW-001
     title: Slow resources fail with a bounded timeout
     priority: P2
     tags: [http]
-    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: true}
   - id: UI-BROKENIMG-001
     title: Broken images expose failed resource responses
     priority: P0
     tags: []
-    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: true}
   - id: UI-NOTIFY-001
     title: Notification message flash shows expected messages
     priority: P1
