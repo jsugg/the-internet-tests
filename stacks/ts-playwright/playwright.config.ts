@@ -2,19 +2,23 @@ import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.THE_INTERNET_BASE_URL ?? 'http://localhost:7080';
 const isCI = Boolean(process.env.CI);
+const htmlReportOutputFolder = process.env.PLAYWRIGHT_HTML_REPORT ?? 'playwright-report';
+const testResultsOutputDir = process.env.PLAYWRIGHT_TEST_RESULTS ?? './test-results';
 
 export default defineConfig({
   testDir: './tests',
-  outputDir: './test-results',
+  outputDir: testResultsOutputDir,
   fullyParallel: true,
   forbidOnly: isCI,
-  retries: 0,
+  retries: isCI ? 1 : 0,
   ...(isCI ? { workers: 1 } : {}),
-  reporter: isCI ? [['list'], ['html', { open: 'never' }]] : 'list',
+  reporter: isCI
+    ? [['list'], ['html', { open: 'never', outputFolder: htmlReportOutputFolder }]]
+    : 'list',
   use: {
     baseURL,
     screenshot: 'only-on-failure',
-    trace: 'retain-on-failure',
+    trace: isCI ? 'on-first-retry' : 'retain-on-failure',
     video: 'retain-on-failure',
   },
   projects: [

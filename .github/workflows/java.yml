@@ -65,10 +65,19 @@ jobs:
           -DtestRunnerAddress=http://localhost:7080
           -DseleniumGridAddress=http://localhost:4444/wd/hub
 
+      - name: Stage Java reports
+        if: always()
+        run: |
+          report_dir="artifacts/java/${GITHUB_RUN_ID}/${{ matrix.browser }}/surefire-reports"
+          mkdir -p "$report_dir"
+          if [ -d stacks/java-selenium-testng/target/surefire-reports ]; then
+            find stacks/java-selenium-testng/target/surefire-reports -name '*.xml' -exec cp {} "$report_dir/" \;
+          fi
+
       - name: Upload Surefire XML
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: java-${{ matrix.browser }}-surefire-xml
-          path: stacks/java-selenium-testng/target/surefire-reports/**/*.xml
+          name: java-${{ matrix.browser }}-${{ github.run_id }}-surefire-xml
+          path: artifacts/java/${{ github.run_id }}/${{ matrix.browser }}/
           if-no-files-found: warn

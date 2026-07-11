@@ -71,6 +71,8 @@ Surefire output is written to:
 target/surefire-reports/
 ```
 
+CI stages the XML files under `artifacts/java/<run-id>/<slice>/surefire-reports/` before uploading each Java workflow artifact. Allure is intentionally deferred until it can stay low-friction beside Surefire.
+
 ## Current scenario coverage
 
 - Login success and failure

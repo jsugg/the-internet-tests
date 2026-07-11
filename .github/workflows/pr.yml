@@ -118,12 +118,21 @@ jobs:
           -DtestRunnerAddress=http://localhost:7080
           -DseleniumGridAddress=http://localhost:4444/wd/hub
 
+      - name: Stage Java reports
+        if: always()
+        run: |
+          report_dir="artifacts/java/${GITHUB_RUN_ID}/smoke/surefire-reports"
+          mkdir -p "$report_dir"
+          if [ -d stacks/java-selenium-testng/target/surefire-reports ]; then
+            find stacks/java-selenium-testng/target/surefire-reports -name '*.xml' -exec cp {} "$report_dir/" \;
+          fi
+
       - name: Upload Surefire XML
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: java-smoke-surefire-xml
-          path: stacks/java-selenium-testng/target/surefire-reports/**/*.xml
+          name: java-smoke-${{ github.run_id }}-surefire-xml
+          path: artifacts/java/${{ github.run_id }}/smoke/
           if-no-files-found: warn
 
   ts-fast:
@@ -172,14 +181,14 @@ jobs:
         working-directory: stacks/ts-playwright
         env:
           THE_INTERNET_BASE_URL: http://localhost:7080
+          PLAYWRIGHT_HTML_REPORT: ../../artifacts/ts/${{ github.run_id }}/smoke/html-report
+          PLAYWRIGHT_TEST_RESULTS: ../../artifacts/ts/${{ github.run_id }}/smoke/test-results
         run: npm run test:chromium:smoke
 
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ts-smoke-playwright-artifacts
-          path: |
-            stacks/ts-playwright/playwright-report/
-            stacks/ts-playwright/test-results/
+          name: ts-smoke-${{ github.run_id }}-playwright
+          path: artifacts/ts/${{ github.run_id }}/smoke/
           if-no-files-found: ignore
