@@ -36,6 +36,14 @@ Run the HTTP/resource slice:
 THE_INTERNET_BASE_URL=http://localhost:7080 npm run test:chromium:http
 ```
 
+Run the flake lab deliberately; it is excluded from normal gates:
+
+```bash
+THE_INTERNET_BASE_URL=http://localhost:7080 npm run test:flake-lab
+```
+
+See [`../../docs/flakiness-guide.md`](../../docs/flakiness-guide.md) before adding or retagging flake-lab scenarios.
+
 Run static checks:
 
 ```bash
