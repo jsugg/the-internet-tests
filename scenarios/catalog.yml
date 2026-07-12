@@ -178,7 +178,7 @@ scenarios:
     title: Sortable tables reorder rows by selected columns
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: true}
   - id: UI-GEOLOCATION-001
     title: Geolocation displays the granted browser coordinates
     priority: P1
@@ -193,7 +193,7 @@ scenarios:
     title: Challenging DOM is asserted without dynamic identifiers
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-SLIDER-001
     title: Horizontal slider moves by keyboard increments
     priority: P1
