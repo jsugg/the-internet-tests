@@ -51,14 +51,14 @@ scenarios:
     coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: true}
   - id: UI-DYNCONTENT-001
     title: Dynamic content changes on reload
-    priority: P1
-    tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    priority: P2
+    tags: [flaky-demo]
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DYNCONTENT-002
     title: Dynamic content partially changes on reload
-    priority: P1
-    tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    priority: P2
+    tags: [flaky-demo]
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DYNCTRL-001
     title: Dynamic controls remove and add a checkbox
     priority: P0
@@ -198,4 +198,44 @@ scenarios:
     title: Horizontal slider moves by keyboard increments
     priority: P1
     tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-DISAPPEAR-001
+    title: Disappearing elements keep a stable core menu
+    priority: P2
+    tags: [flaky-demo]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-ENTRYAD-001
+    title: Entry ad modal can be observed and closed
+    priority: P2
+    tags: [flaky-demo]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-EXITINTENT-001
+    title: Exit intent modal opens on desktop mouse leave
+    priority: P2
+    tags: [desktop, not-ci]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-TYPOS-001
+    title: Typos page demonstrates nondeterministic copy
+    priority: P2
+    tags: [flaky-demo]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-SHIFTING-001
+    title: Shifting content demonstrates randomized layout
+    priority: P2
+    tags: [flaky-demo]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-LARGEDOM-001
+    title: Large and deep DOM supports targeted traversal
+    priority: P2
+    tags: [not-ci]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-JQUERYUI-001
+    title: JQuery UI menu exposes nested desktop options
+    priority: P2
+    tags: [desktop, not-ci]
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-ABTEST-001
+    title: A/B testing page allows either experiment variant
+    priority: P2
+    tags: [flaky-demo]
     coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
