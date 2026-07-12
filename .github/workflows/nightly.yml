@@ -75,6 +75,111 @@ jobs:
           path: artifacts/java/${{ github.run_id }}/nightly-${{ matrix.browser }}/
           if-no-files-found: warn
 
+  java-grid-nightly:
+    name: Java Grid ${{ matrix.browser }} nightly
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chrome
+            grid_node_image: selenium/node-chrome:4.37.0-20251020@sha256:17e719a9db3420ded324ea0bdfaaf1578e1a20ff4b6237330f8542177177cde1
+            artifact_slice: grid-chrome
+          - browser: edge
+            grid_node_image: selenium/node-edge:4.37.0-20251020@sha256:9c85afa973372761c17605d8f8e8fe4c35eab7dcbe7312218177fc82db1f3c54
+            artifact_slice: grid-edge
+          - browser: firefox
+            grid_node_image: selenium/node-firefox:4.37.0-20251020@sha256:92aa8ad9544e3df24fa31e5dcf2b6fd90455f23c2365ac5232e1b934ca62d8c7
+            artifact_slice: grid-firefox
+
+    services:
+      website:
+        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
+        ports:
+          - 7080:5000
+      selenium-hub:
+        image: selenium/hub:4.37.0-20251020@sha256:022b35f085df0c5f324d5da15e66c7e4971049d7606fb4293a802c9d4f77997b
+        ports:
+          - 4442:4442
+          - 4443:4443
+          - 4444:4444
+      browser-node:
+        image: ${{ matrix.grid_node_image }}
+        options: --shm-size=2g
+        env:
+          SE_EVENT_BUS_HOST: selenium-hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+          SE_NODE_ENABLE_MANAGED_DOWNLOADS: "true"
+          SE_NODE_MAX_SESSIONS: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Wait for Selenium Grid
+        run: |
+          python3 - <<'PY'
+          import json
+          import time
+          import urllib.request
+
+          deadline = time.monotonic() + 90
+          last_error = ""
+          while time.monotonic() < deadline:
+              try:
+                  with urllib.request.urlopen("http://localhost:4444/status", timeout=5) as response:
+                      payload = json.load(response)
+                  value = payload.get("value", {})
+                  if value.get("ready") is True:
+                      print(json.dumps(value, sort_keys=True))
+                      raise SystemExit(0)
+                  last_error = json.dumps(value, sort_keys=True)
+              except Exception as exc:
+                  last_error = str(exc)
+              time.sleep(3)
+          raise SystemExit(f"Selenium Grid was not ready: {last_error}")
+          PY
+
+      - name: Run Java Selenium Grid nightly regression
+        run: >-
+          mvn -B -f stacks/java-selenium-testng/pom.xml -P CLI_Parameters clean test
+          -DsuiteXmlFile=src/test/resources/regression.xml
+          -Dbrowser=${{ matrix.browser }}
+          -DbrowserVersion=
+          -DheadlessBrowser=false
+          -DuseSeleniumGrid=true
+          -DtestsThreadCount=1
+          -DwebAppAddress=http://localhost:7080
+          -DtestRunnerAddress=http://website:5000
+          -DseleniumGridAddress=http://localhost:4444/wd/hub
+
+      - name: Stage Java Grid reports
+        if: always()
+        run: |
+          report_dir="artifacts/java/${GITHUB_RUN_ID}/${{ matrix.artifact_slice }}/surefire-reports"
+          mkdir -p "$report_dir"
+          if [ -d stacks/java-selenium-testng/target/surefire-reports ]; then
+            find stacks/java-selenium-testng/target/surefire-reports -name '*.xml' -exec cp {} "$report_dir/" \;
+          fi
+
+      - name: Upload Java Grid Surefire XML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-${{ matrix.artifact_slice }}-${{ github.run_id }}-surefire-xml
+          path: artifacts/java/${{ github.run_id }}/${{ matrix.artifact_slice }}/
+          if-no-files-found: warn
+
   ts-nightly:
     name: TypeScript ${{ matrix.project }} nightly
     runs-on: ubuntu-24.04

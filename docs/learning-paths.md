@@ -20,7 +20,7 @@ Each path uses the same repository artifacts in a different order. Start with th
 
 1. Read [`docs/anti-patterns.md`](anti-patterns.md).
 2. Inspect Java driver setup, waits, Page Objects, and download handling.
-3. Compare local browser factories with future Grid/nightly goals.
+3. Compare local browser factories with the wired Grid/nightly track.
 4. Review Surefire XML artifacts and TestNG suite XML files.
 
 ## Modern Playwright learner
