@@ -50,6 +50,11 @@
             <class name="theinternetwebsite.ui.testcases.CheckboxesTest"/>
         </classes>
     </test>
+    <test name = "ChallengingDomTest">
+        <classes>
+            <class name="theinternetwebsite.ui.testcases.ChallengingDomTest"/>
+        </classes>
+    </test>
     <test name = "DragAndDropTest">
         <classes>
             <class name="theinternetwebsite.ui.testcases.DragAndDropTest"/>

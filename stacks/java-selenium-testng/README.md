@@ -77,6 +77,7 @@ CI stages the XML files under `artifacts/java/<run-id>/<slice>/surefire-reports/
 
 - Login success and failure
 - Checkboxes
+- Challenging DOM
 - Context menu
 - Drag and drop
 - Dropdown

@@ -1,7 +1,7 @@
 # Python Playwright stack
 
 Pytest + Playwright coverage for the shared scenario catalog. This stack covers
-the Python P0 UI suite and Chromium-only HTTP/resource checks.
+the Python P0 UI suite, selected P1 data-modeling coverage, and Chromium-only HTTP/resource checks.
 
 ## Prerequisites
 
@@ -61,6 +61,10 @@ channels, and device emulation through CLI flags. CI keeps the Python gate
 definition aligned with the TypeScript Playwright stack: Chromium smoke in the
 fast PR gate, Chromium/Firefox/WebKit plus mobile-emulation slices in the
 path-filtered full gate, and branded Chrome/Edge plus full mobile slices nightly.
+
+## Current selected P1 coverage
+
+- Sortable table extraction and column-order assertions
 
 ## Reports
 
