@@ -36,6 +36,8 @@ docker compose -f docker/compose.yml down
 
 The retired `./run` script previously bundled app startup, Grid startup, and Maven execution. Docker Compose now owns local containers, while Maven stays the test entrypoint.
 
+The Grid services are pinned to the same Selenium image digests used by the Nightly Grid workflow, so local reproduction and scheduled CI exercise the same browser-node family.
+
 Start the app plus local Grid from the repository root:
 
 ```bash
@@ -62,6 +64,10 @@ Stop all Compose services:
 ```bash
 docker compose -f docker/compose.yml -f docker/compose.grid.yml down
 ```
+
+### Cloud Grid placeholders
+
+The suite has one remote-driver seam: `-DseleniumGridAddress=<remote-webdriver-url>` with `-DuseSeleniumGrid=true`. Keep provider credentials outside the repository and inject them only in a private runner or a maintainer-approved workflow secret. No cloud secret is required for the checked-in Nightly Grid job; it uses the local Compose-equivalent Grid services above.
 
 ## Reports
 
