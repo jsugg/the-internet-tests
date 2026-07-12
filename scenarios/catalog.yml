@@ -28,22 +28,22 @@ scenarios:
     title: Context menu opens the expected alert
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DRAGDROP-001
     title: Drag box A over box B
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DRAGDROP-002
     title: Drag box B over box A
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DRAGDROP-003
     title: Drag boxes in both directions
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-DROPDOWN-001
     title: Dropdown options can be selected
     priority: P0
@@ -93,7 +93,7 @@ scenarios:
     title: Floating menu remains visible while scrolling
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-IFRAME-001
     title: iFrame editor supports context switching
     priority: P0
@@ -108,7 +108,7 @@ scenarios:
     title: Hovering reveals user details
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
   - id: UI-JSALERT-001
     title: JavaScript alert buttons open popups
     priority: P0
@@ -168,4 +168,34 @@ scenarios:
     title: Notification message flash shows expected messages
     priority: P1
     tags: []
-    coverage: {java-selenium-testng: true, ts-playwright: false, python-playwright: false}
+    coverage: {java-selenium-testng: true, ts-playwright: true, python-playwright: false}
+  - id: UI-SHADOWDOM-001
+    title: Shadow DOM exposes text through open roots and slots
+    priority: P1
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-SORTTABLE-001
+    title: Sortable tables reorder rows by selected columns
+    priority: P1
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-GEOLOCATION-001
+    title: Geolocation displays the granted browser coordinates
+    priority: P1
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-INFINITE-001
+    title: Infinite scroll loads additional content on demand
+    priority: P1
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-CHALLENGING-001
+    title: Challenging DOM is asserted without dynamic identifiers
+    priority: P1
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
+  - id: UI-SLIDER-001
+    title: Horizontal slider moves by keyboard increments
+    priority: P1
+    tags: []
+    coverage: {java-selenium-testng: false, ts-playwright: true, python-playwright: false}
