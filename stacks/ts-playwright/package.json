@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
-    "test:chromium:smoke": "playwright test --project=chromium --grep @smoke"
+    "test:chromium:smoke": "playwright test --project=chromium --grep @smoke",
+    "test:flake-lab": "playwright test --project=chromium --grep @flaky-demo --grep-invert @not-ci"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
