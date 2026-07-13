@@ -1,4 +1,4 @@
-name: TypeScript
+name: "TypeScript · Regression (path-filtered)"
 
 on:
   pull_request:
@@ -23,8 +23,8 @@ permissions:
   contents: read
 
 jobs:
-  regression:
-    name: TypeScript ${{ matrix.project }} ${{ matrix.slice }}
+  typescript-regression:
+    name: "TypeScript regression · ${{ matrix.project }} (${{ matrix.slice }})"
     runs-on: ubuntu-24.04
     timeout-minutes: 25
 

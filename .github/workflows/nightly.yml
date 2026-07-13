@@ -1,4 +1,4 @@
-name: Nightly
+name: "Nightly · Cross-Browser + Grid Regression"
 
 on:
   schedule:
@@ -15,8 +15,8 @@ permissions:
   contents: read
 
 jobs:
-  java-nightly:
-    name: Java ${{ matrix.browser }} nightly
+  java-nightly-local:
+    name: "Java nightly · local driver · ${{ matrix.browser }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 35
 
@@ -75,8 +75,8 @@ jobs:
           path: artifacts/java/${{ github.run_id }}/nightly-${{ matrix.browser }}/
           if-no-files-found: warn
 
-  java-grid-nightly:
-    name: Java Grid ${{ matrix.browser }} nightly
+  java-nightly-grid:
+    name: "Java nightly · Selenium Grid · ${{ matrix.browser }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 45
 
@@ -180,8 +180,8 @@ jobs:
           path: artifacts/java/${{ github.run_id }}/${{ matrix.artifact_slice }}/
           if-no-files-found: warn
 
-  ts-nightly:
-    name: TypeScript ${{ matrix.project }} nightly
+  typescript-nightly:
+    name: "TypeScript nightly · ${{ matrix.project }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 30
 
@@ -289,8 +289,8 @@ jobs:
           path: artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/
           if-no-files-found: ignore
 
-  py-nightly:
-    name: Python ${{ matrix.project }} nightly
+  python-nightly:
+    name: "Python nightly · ${{ matrix.project }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 30
 
