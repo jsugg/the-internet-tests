@@ -85,13 +85,13 @@ jobs:
       matrix:
         include:
           - browser: chrome
-            grid_node_image: selenium/node-chrome:4.37.0-20251020@sha256:17e719a9db3420ded324ea0bdfaaf1578e1a20ff4b6237330f8542177177cde1
+            grid_node_image: selenium/node-chrome:4.45.0-20260606@sha256:fae4a6dbb32939885ad92f8b7e1ed994179309d297c9e8b1fd39ea55af34ff4a
             artifact_slice: grid-chrome
           - browser: edge
-            grid_node_image: selenium/node-edge:4.37.0-20251020@sha256:9c85afa973372761c17605d8f8e8fe4c35eab7dcbe7312218177fc82db1f3c54
+            grid_node_image: selenium/node-edge:4.45.0-20260606@sha256:917b5cd6cde162f6989f26e21d14c1aa5ae8a092f5ea8f943dc204d52f70a8e0
             artifact_slice: grid-edge
           - browser: firefox
-            grid_node_image: selenium/node-firefox:4.37.0-20251020@sha256:92aa8ad9544e3df24fa31e5dcf2b6fd90455f23c2365ac5232e1b934ca62d8c7
+            grid_node_image: selenium/node-firefox:4.45.0-20260606@sha256:d2ea8f4fa9c3178f9842fd16c51626cb934b303833ca70d9e3ce4aa5c539baf7
             artifact_slice: grid-firefox
 
     services:
@@ -100,7 +100,7 @@ jobs:
         ports:
           - 7080:5000
       selenium-hub:
-        image: selenium/hub:4.37.0-20251020@sha256:022b35f085df0c5f324d5da15e66c7e4971049d7606fb4293a802c9d4f77997b
+        image: selenium/hub:4.45.0-20260606@sha256:684d163880d558f217b29d24e992c5a52e0b130381ab7e1f79e9bad0414f753b
         ports:
           - 4442:4442
           - 4443:4443
