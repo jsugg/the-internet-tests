@@ -36,6 +36,11 @@ public final class DriverFactory {
         chromeOptions.setExperimentalOption("prefs", chromePreferences());
         chromeOptions.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         chromeOptions.addArguments("--window-size=1920,1200");
+        if (!config.useSeleniumGrid()) {
+            // Ubuntu 24.04 CI runners restrict unprivileged user namespaces (AppArmor),
+            // which crashes the Chromium sandbox on launch; disable it for local runs.
+            chromeOptions.addArguments("--no-sandbox", "--disable-dev-shm-usage");
+        }
         if (config.headless() && !config.useSeleniumGrid()) {
             chromeOptions.addArguments("--headless=new");
         }
@@ -70,6 +75,11 @@ public final class DriverFactory {
         EdgeOptions edgeOptions = new EdgeOptions();
         edgeOptions.setExperimentalOption("prefs", chromePreferences());
         edgeOptions.addArguments("--window-size=1920,1200");
+        if (!config.useSeleniumGrid()) {
+            // Ubuntu 24.04 CI runners restrict unprivileged user namespaces (AppArmor),
+            // which crashes the Chromium sandbox on launch; disable it for local runs.
+            edgeOptions.addArguments("--no-sandbox", "--disable-dev-shm-usage");
+        }
         if (config.headless() && !config.useSeleniumGrid()) {
             edgeOptions.addArguments("--headless=new");
         }

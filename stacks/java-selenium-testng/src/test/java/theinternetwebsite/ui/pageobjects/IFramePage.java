@@ -28,6 +28,12 @@ public class IFramePage extends BasePage {
 
     public void switchToIFrame() {
         driver().switchTo().frame(this.iFrame);
+        // TinyMCE injects its default content asynchronously after the frame loads.
+        // Wait until it has rendered so reads don't race the editor boot: the test
+        // reads the text and writeIFrameTextAreaText re-reads it, and both snapshots
+        // must agree. (The tinymce global lives in the parent document, not this
+        // content frame, so probe the rendered body text instead.)
+        waitFor(Duration.ofSeconds(10)).until(d -> !iFrameTextArea.getText().isEmpty());
     }
 
     public void switchToMain() {
