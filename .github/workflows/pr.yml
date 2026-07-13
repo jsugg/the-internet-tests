@@ -1,4 +1,4 @@
-name: PR
+name: "PR & Push · Fast Checks (lint + smoke)"
 
 on:
   pull_request:
@@ -13,8 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  repo-lint:
-    name: Repository lint
+  repo-hygiene:
+    name: "Repo hygiene · workflows + commits + markdown"
     runs-on: ubuntu-24.04
     timeout-minutes: 10
 
@@ -66,8 +66,8 @@ jobs:
       - name: Lint Markdown
         run: git ls-files -z '*.md' | xargs -0 npx --yes markdownlint-cli2@0.23.0
 
-  catalog:
-    name: Scenario catalog
+  scenario-catalog:
+    name: "Scenario catalog · drift check"
     runs-on: ubuntu-24.04
     timeout-minutes: 5
 
@@ -80,8 +80,8 @@ jobs:
           python3 tools/check-scenarios.py --write-matrix
           git diff --exit-code docs/scenario-matrix.md
 
-  java-fast:
-    name: Java compile and smoke
+  java-smoke:
+    name: "Java · compile + smoke (chrome)"
     runs-on: ubuntu-24.04
     timeout-minutes: 20
 
@@ -135,8 +135,8 @@ jobs:
           path: artifacts/java/${{ github.run_id }}/smoke/
           if-no-files-found: warn
 
-  ts-fast:
-    name: TypeScript typecheck and smoke
+  ts-smoke:
+    name: "TypeScript · static checks + smoke (chromium)"
     runs-on: ubuntu-24.04
     timeout-minutes: 15
 
@@ -193,8 +193,8 @@ jobs:
           path: artifacts/ts/${{ github.run_id }}/smoke/
           if-no-files-found: ignore
 
-  py-fast:
-    name: Python typecheck and smoke
+  py-smoke:
+    name: "Python · static checks + smoke (chromium)"
     runs-on: ubuntu-24.04
     timeout-minutes: 15
 

@@ -1,4 +1,4 @@
-name: Python
+name: "Python · Regression (path-filtered)"
 
 on:
   pull_request:
@@ -23,8 +23,8 @@ permissions:
   contents: read
 
 jobs:
-  regression:
-    name: Python ${{ matrix.project }} ${{ matrix.slice }}
+  python-regression:
+    name: "Python regression · ${{ matrix.project }} (${{ matrix.slice }})"
     runs-on: ubuntu-24.04
     timeout-minutes: 25
 

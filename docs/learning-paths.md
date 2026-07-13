@@ -32,8 +32,9 @@ Each path uses the same repository artifacts in a different order. Start with th
 
 ## Senior CI/architecture reviewer
 
-1. Start with the scenario catalog and generated matrix.
-2. Read [`docs/flakiness-guide.md`](flakiness-guide.md).
-3. Inspect PR, per-stack, and Nightly workflow slices.
-4. Check how artifacts are staged under `artifacts/<stack>/<run-id>/<slice>/`.
-5. Review how `@http`, `@desktop`, `@mobile-emulation`, `@flaky-demo`, and `@not-ci` compose with browser projects.
+1. Read [`docs/ci-workflows.md`](ci-workflows.md) for the CI topology before inspecting the slices.
+2. Start with the scenario catalog and generated matrix.
+3. Read [`docs/flakiness-guide.md`](flakiness-guide.md).
+4. Inspect PR, per-stack, and Nightly workflow slices.
+5. Check how artifacts are staged under `artifacts/<stack>/<run-id>/<slice>/`.
+6. Review how `@http`, `@desktop`, `@mobile-emulation`, `@flaky-demo`, and `@not-ci` compose with browser projects.

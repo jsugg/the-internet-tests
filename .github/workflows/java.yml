@@ -1,4 +1,4 @@
-name: Java
+name: "Java · Regression (path-filtered)"
 
 on:
   pull_request:
@@ -23,8 +23,8 @@ permissions:
   contents: read
 
 jobs:
-  regression:
-    name: Java ${{ matrix.browser }} regression
+  java-regression:
+    name: "Java regression · ${{ matrix.browser }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 35
 
