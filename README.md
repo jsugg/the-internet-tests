@@ -41,6 +41,7 @@ Then use the stack READMEs and guides for deeper runs:
 - [Framework comparison](docs/framework-comparison.md)
 - [Interview guide](docs/interview-guide.md)
 - [Flakiness guide](docs/flakiness-guide.md)
+- [CI workflows](docs/ci-workflows.md)
 - [Learning paths](docs/learning-paths.md)
 
 ## 4. Stack matrix
