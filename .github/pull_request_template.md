@@ -16,7 +16,7 @@ mirror the gates in `pr.yml` and the expectations in `CONTRIBUTING.md`.
 - [ ] Scenario catalog (`scenarios/catalog.yml`) updated, or this change adds or removes no scenarios.
 - [ ] Matrix regenerated with `python3 tools/check-scenarios.py --write-matrix`, and the README section 5 embed matches it.
 - [ ] Every command I changed in the documentation was executed, not just edited.
-- [ ] Documentation updated for this change type, per the lifecycle table.
+- [ ] Documentation updated for this change type, per the lifecycle table in [`docs/README.md`](../docs/README.md).
 - [ ] Workflow changes under `.github/workflows/` are mirrored in `docs/ci-workflows.md` in this pull request.
 - [ ] No credentials or tokens, private endpoints, unredacted traces or screenshots, or real user data, per the secrets and captures rules in `CONTRIBUTING.md`.
 - [ ] ADR added under `docs/adr/`, or this decision is not durable enough to need one.

@@ -141,3 +141,4 @@ CI stages report files under `artifacts/<stack>/<run-id>/<slice>/` before upload
 ## 9. Contributing
 
 - [Contributing guide](CONTRIBUTING.md) — setup, the fast validation loop, the scenario-catalog workflow, commit and pull-request conventions, and the recorded waivers.
+- [Documentation index](docs/README.md) — every document, its audience and update trigger, and which source of truth wins when two disagree.

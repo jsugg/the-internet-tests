@@ -180,7 +180,9 @@ A change is documentation-compliant when all five hold:
 ## Documentation expectations
 
 Update the documentation in the same pull request as the change. What to update
-depends on what you changed:
+depends on what you changed. [`docs/README.md`](docs/README.md) carries the full
+lifecycle table — every document's audience, update trigger, and review cadence —
+plus the authority order to apply when two sources disagree.
 
 | Change | Update |
 | --- | --- |
