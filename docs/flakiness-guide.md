@@ -44,3 +44,10 @@ THE_INTERNET_BASE_URL=http://localhost:7080 npx playwright test --project=chromi
 5. If variable, encode the allowed variants or move the scenario to `@flaky-demo`.
 6. If unsuitable for CI, add `@not-ci` and document the manual learning value.
 7. Never weaken catalog reconciliation, linting, typechecking, or CI gates to hide the failure.
+
+## Related documentation
+
+- [Documentation index](README.md) — every document, and which source wins on conflict.
+- [ADR-0004 — Isolate flaky-demo and not-ci tests from the gates](adr/0004-flaky-demo-not-ci-isolation.md) — why the unstable examples exist at all.
+- [CI workflows](ci-workflows.md) — where each tag is included or inverted.
+- [Anti-patterns](anti-patterns.md) — defects that look like flakiness but are not.

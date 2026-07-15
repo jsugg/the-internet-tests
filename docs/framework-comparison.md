@@ -25,3 +25,10 @@ Use this guide to explain why the repository keeps three maintained tracks inste
 As of 2026-07-12, the latest published State of JavaScript results are the 2025 edition. Its testing section is the citation to refresh when discussing JavaScript testing tool popularity or sentiment: [State of JavaScript 2025 — Testing](https://2025.stateofjs.com/en-US/libraries/testing/).
 
 Use that citation as context, not as a mandate. This repository's implementation choices are driven by teaching coverage: Selenium for legacy/WebDriver literacy, TypeScript Playwright for the flagship modern stack, and Python Playwright for a second-language comparison.
+
+## Related documentation
+
+- [Documentation index](README.md) — every document, and which source wins on conflict.
+- [ADR-0003 — Maintain three framework tracks](adr/0003-three-framework-tracks.md) — why Cypress and WebdriverIO are argued here but not implemented.
+- [Architecture](architecture.md) — the stack boundaries this comparison depends on.
+- [Learning paths](learning-paths.md) — where to go next, by audience.

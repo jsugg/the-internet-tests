@@ -19,3 +19,10 @@ Use these examples when reviewing legacy browser automation code.
 | Anti-pattern | Example location | Safer pattern |
 | --- | --- | --- |
 | Verifying a browser download by fetching the link with raw HTTP | `stacks/java-selenium-testng/src/test/java/theinternetwebsite/ui/pageobjects/DownloadPage.java` | UI download scenarios click in the browser and wait for Selenium-managed downloads or the local download directory; future direct resource checks belong in an `@http` suite. |
+
+## Related documentation
+
+- [Documentation index](README.md) — every document, and which source wins on conflict.
+- [Java Selenium/TestNG stack](../stacks/java-selenium-testng/README.md) — how to run the suite these defects were found in.
+- [Flakiness guide](flakiness-guide.md) — the triage order for a test that fails intermittently rather than wrongly.
+- [Interview guide](interview-guide.md) — the same mistakes, phrased as things to avoid saying.
