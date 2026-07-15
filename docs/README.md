@@ -26,6 +26,7 @@ they annotate.
 | [`learning-paths.md`](learning-paths.md) | Learners, by audience | Authored | A document is added or removed, or audience routing changes | Every 6 months |
 | [`anti-patterns.md`](anti-patterns.md) | Legacy Selenium maintainers | Authored | A defect is rescued, or a referenced symbol moves or is renamed | Every 6 months |
 | [`scenario-matrix.md`](scenario-matrix.md) | Everyone | **Generated** | Never edit. Regenerate with `python3 tools/check-scenarios.py --write-matrix` whenever `scenarios/catalog.yml` changes | None; CI fails on drift |
+| [`runbooks/ci-failure-triage.md`](runbooks/ci-failure-triage.md) | Anyone facing a red check | Authored | A job, gate, or reproduction command changes | Every 6 months |
 | [`adr/README.md`](adr/README.md) | Contributors; reviewers | Authored | An ADR is added or superseded | Annually |
 | [`adr/0000-template.md`](adr/0000-template.md) | ADR authors | Authored | The ADR structure changes | Annually |
 | [`adr/0001-shared-scenario-catalog.md`](adr/0001-shared-scenario-catalog.md) | Contributors; reviewers | Authored | Superseding decision only | None |

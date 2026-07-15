@@ -113,3 +113,7 @@ Every stack stages its reports under `artifacts/<stack>/<run-id>/<slice>/` befor
 - **Python** (`artifacts/py/...`) — JUnit XML plus retained traces, screenshots, and videos, uploaded by **Upload Playwright artifacts** `if: always()`.
 
 Because the uploads run on `always()`, artifacts are available even when the test step fails. See the [`README.md`](../README.md) reports section for the matching per-stack local report paths.
+
+## When a check fails
+
+This guide describes what runs. For what to do when one of these jobs goes red — which artifact to open first, and how to reproduce each failure class locally — see [`runbooks/ci-failure-triage.md`](runbooks/ci-failure-triage.md).
