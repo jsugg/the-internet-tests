@@ -18,6 +18,7 @@ they annotate.
 | [`../CONTRIBUTING.md`](../CONTRIBUTING.md) | Contributors | Authored | Setup, validation loop, commit or pull-request convention, or waiver change | Every 6 months |
 | [`../.github/pull_request_template.md`](../.github/pull_request_template.md) | Contributors | Authored | Any change to the gates or documentation expectations it lists | Every 6 months |
 | [`README.md`](README.md) (this file) | Anyone navigating the documentation | Authored | Any document added, removed, or repurposed | Every 6 months |
+| [`architecture.md`](architecture.md) | Contributors; reviewers | Authored | New stack, catalog model change, or CI topology change | Annually |
 | [`ci-workflows.md`](ci-workflows.md) | Contributors; reviewers | Authored | Any workflow semantic change, in the same pull request | Every 3 months |
 | [`flakiness-guide.md`](flakiness-guide.md) | Contributors touching tags or retries | Authored | Retry, tagging, quarantine, or artifact policy change | Every 6 months |
 | [`framework-comparison.md`](framework-comparison.md) | Learners; reviewers choosing a stack | Authored | A stack is added or dropped, or a dated external claim goes stale | Every 6 months |
