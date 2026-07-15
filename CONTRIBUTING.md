@@ -139,6 +139,32 @@ scenario-catalog drift, and a compile-plus-smoke slice per stack. Regression
 workflows are path-filtered and only run when your change touches their stack.
 See [`docs/ci-workflows.md`](docs/ci-workflows.md) for the full trigger fan-out.
 
+## Secrets and captures
+
+This is a teaching repository with no deployed service, no users, and no data of
+its own, so the realistic risk here is not an exploit. It is committing something
+that should never have been public, into a repository that is public on purpose.
+
+- **Never commit a credential or token.** Not an API key, a provider token, a
+  session cookie, or a private key — including expired and throwaway ones. Secret
+  scanning and push protection are enabled on this repository, so a detected
+  secret blocks the push. Treat that as the backstop, not the plan.
+- **Point the stacks at the demo app, not at a real system.** The moment a stack
+  runs against something real, its traces and screenshots inherit that system's
+  secrets. Use the pinned container on `http://localhost:7080`.
+- **Redact captures before attaching them.** A Playwright trace records request
+  headers in full. Open a trace, screenshot, or log before you put it in a pull
+  request.
+- **Keep `artifacts/` out of Git.** It is git-ignored staging for CI upload, and
+  CI artifacts on a public repository are downloadable by anyone.
+- **Keep remote-grid credentials outside the repository**, injected only through
+  a private runner or a maintainer-approved workflow secret, as the
+  [Java stack README](stacks/java-selenium-testng/README.md) says. No
+  checked-in workflow needs one.
+
+The demo app's `tomsmith` / `SuperSecretPassword!` login is a published fixture
+of a public teaching app, not a secret. It belongs in the tests.
+
 ## Documentation compliance
 
 A change is documentation-compliant when all five hold:
