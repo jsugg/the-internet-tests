@@ -166,7 +166,7 @@ jobs:
 
       - name: Upload Surefire XML
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-smoke-${{ github.run_id }}-surefire-xml
           path: artifacts/java/${{ github.run_id }}/smoke/
@@ -224,7 +224,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ts-smoke-${{ github.run_id }}-playwright
           path: artifacts/ts/${{ github.run_id }}/smoke/
@@ -290,7 +290,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: py-smoke-${{ github.run_id }}-playwright
           path: artifacts/py/${{ github.run_id }}/smoke/

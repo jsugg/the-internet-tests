@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ts-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
           path: artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/
