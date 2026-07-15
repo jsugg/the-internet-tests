@@ -26,6 +26,13 @@ they annotate.
 | [`learning-paths.md`](learning-paths.md) | Learners, by audience | Authored | A document is added or removed, or audience routing changes | Every 6 months |
 | [`anti-patterns.md`](anti-patterns.md) | Legacy Selenium maintainers | Authored | A defect is rescued, or a referenced symbol moves or is renamed | Every 6 months |
 | [`scenario-matrix.md`](scenario-matrix.md) | Everyone | **Generated** | Never edit. Regenerate with `python3 tools/check-scenarios.py --write-matrix` whenever `scenarios/catalog.yml` changes | None; CI fails on drift |
+| [`adr/README.md`](adr/README.md) | Contributors; reviewers | Authored | An ADR is added or superseded | Annually |
+| [`adr/0000-template.md`](adr/0000-template.md) | ADR authors | Authored | The ADR structure changes | Annually |
+| [`adr/0001-shared-scenario-catalog.md`](adr/0001-shared-scenario-catalog.md) | Contributors; reviewers | Authored | Superseding decision only | None |
+| [`adr/0002-ui-http-scenario-split.md`](adr/0002-ui-http-scenario-split.md) | Contributors; reviewers | Authored | Superseding decision only | None |
+| [`adr/0003-three-framework-tracks.md`](adr/0003-three-framework-tracks.md) | Contributors; reviewers | Authored | Superseding decision only | None |
+| [`adr/0004-flaky-demo-not-ci-isolation.md`](adr/0004-flaky-demo-not-ci-isolation.md) | Contributors; reviewers | Authored | Superseding decision only | None |
+| [`adr/0005-independent-workflow-topology.md`](adr/0005-independent-workflow-topology.md) | Contributors; reviewers | Authored | Superseding decision only | None |
 | [`../stacks/java-selenium-testng/README.md`](../stacks/java-selenium-testng/README.md) | Java Selenium/TestNG track | Authored | Runtime, dependency, command, project, or report change | Every 6 months |
 | [`../stacks/ts-playwright/README.md`](../stacks/ts-playwright/README.md) | TypeScript Playwright track | Authored | Runtime, dependency, command, project, or report change | Every 6 months |
 | [`../stacks/python-playwright/README.md`](../stacks/python-playwright/README.md) | Python Playwright track | Authored | Runtime, dependency, command, project, or report change | Every 6 months |
