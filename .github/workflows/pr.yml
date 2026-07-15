@@ -82,6 +82,9 @@ jobs:
           --retry-wait-time 2
           --timeout 20
 
+      - name: Validate README fast start
+        run: python3 tools/check-fast-start.py
+
       - name: Require CI guide updates with workflow changes
         if: >-
           github.event_name == 'pull_request' &&
