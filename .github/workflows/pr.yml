@@ -82,6 +82,24 @@ jobs:
           --retry-wait-time 2
           --timeout 20
 
+      - name: Require CI guide updates with workflow changes
+        if: >-
+          github.event_name == 'pull_request' &&
+          !contains(github.event.pull_request.title, '[ci-guide-exempt]')
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          changed="$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA")"
+          if printf '%s\n' "$changed" | grep -q '^\.github/workflows/' &&
+             ! printf '%s\n' "$changed" | grep -qx 'docs/ci-workflows.md'; then
+            echo "::error file=docs/ci-workflows.md::This pull request changes .github/workflows/ but not docs/ci-workflows.md"
+            echo "docs/ci-workflows.md mirrors the workflows at job and step granularity, and nothing else keeps it honest."
+            echo "Update it in this pull request. If the change has no semantic effect on the guide, add [ci-guide-exempt] to the pull request title."
+            exit 1
+          fi
+          echo "CI guide sync ok"
+
   scenario-catalog:
     name: "Scenario catalog · drift check"
     runs-on: ubuntu-24.04

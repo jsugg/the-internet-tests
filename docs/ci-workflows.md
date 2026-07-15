@@ -61,7 +61,7 @@ Steps run top to bottom within each job. A step marked (always) carries `if: alw
 
 | Job (`id`) | Intent | Steps (top to bottom) | File |
 | --- | --- | --- | --- |
-| `repo-hygiene` | Lint workflows, commit messages, and Markdown, and check documentation links | 1. Checkout repository, 2. Set up Node 22, 3. Lint GitHub Actions workflows, 4. Lint pull request commits (conditional), 5. Lint latest commit (conditional), 6. Lint Markdown, 7. Check Markdown links | [`pr.yml`](../.github/workflows/pr.yml) |
+| `repo-hygiene` | Lint workflows, commit messages, and Markdown, check documentation links, and require CI-guide updates alongside workflow changes | 1. Checkout repository, 2. Set up Node 22, 3. Lint GitHub Actions workflows, 4. Lint pull request commits (conditional), 5. Lint latest commit (conditional), 6. Lint Markdown, 7. Check Markdown links, 8. Require CI guide updates with workflow changes (conditional) | [`pr.yml`](../.github/workflows/pr.yml) |
 | `scenario-catalog` | Fail if the generated scenario matrix or the README embed of it has drifted | 1. Checkout repository, 2. Check scenario catalog | [`pr.yml`](../.github/workflows/pr.yml) |
 | `java-smoke` | Compile the Java tests and run the Chrome smoke suite | 1. Checkout repository, 2. Set up JDK 25, 3. Compile Java tests, 4. Run Java smoke, 5. Stage Java reports (always), 6. Upload Surefire XML (always) | [`pr.yml`](../.github/workflows/pr.yml) |
 | `ts-smoke` | Type-check, lint, and format-check, then run the Chromium smoke suite | 1. Checkout repository, 2. Set up Node 22, 3. Install TypeScript stack dependencies, 4. Type-check TypeScript stack, 5. Lint TypeScript stack, 6. Check TypeScript stack formatting, 7. Install Chromium browser, 8. Run TypeScript Chromium smoke, 9. Upload Playwright artifacts (always) | [`pr.yml`](../.github/workflows/pr.yml) |
@@ -73,6 +73,14 @@ Steps run top to bottom within each job. A step marked (always) carries `if: alw
 | `java-nightly-grid` | Run the Java regression suite against Selenium Grid per matrix browser | 1. Checkout repository, 2. Set up JDK 25, 3. Wait for Selenium Grid, 4. Run Java Selenium Grid nightly regression, 5. Stage Java Grid reports (always), 6. Upload Java Grid Surefire XML (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
 | `typescript-nightly` | Plan and run each TypeScript nightly slice per matrix project | 1. Checkout repository, 2. Set up Node 22, 3. Install TypeScript stack dependencies, 4. Plan TypeScript nightly slice, 5. Install Playwright browser (conditional), 6. Run TypeScript nightly slice (conditional), 7. Upload Playwright artifacts (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
 | `python-nightly` | Plan and run each Python nightly slice per matrix project | 1. Checkout repository, 2. Set up Python 3.14, 3. Install Python stack dependencies, 4. Plan Python nightly slice, 5. Install Playwright browser (conditional), 6. Run Python nightly slice (conditional), 7. Upload Playwright artifacts (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
+
+This guide is the one document CI checks against its own source. A pull request
+that changes anything under `.github/workflows/` without touching this file fails
+`repo-hygiene`, because a step-level mirror that nothing enforces is the highest-
+risk documentation in the repository: it stays plausible long after it stops
+being true. If a workflow change genuinely has no semantic effect here — a
+whitespace or comment edit — put the literal token `[ci-guide-exempt]` in the
+pull request title to skip the check.
 
 ## Matrix and tags
 
