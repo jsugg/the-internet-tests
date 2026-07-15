@@ -34,6 +34,9 @@ they annotate.
 | [`adr/0003-three-framework-tracks.md`](adr/0003-three-framework-tracks.md) | Contributors; reviewers | Authored | Superseding decision only | None |
 | [`adr/0004-flaky-demo-not-ci-isolation.md`](adr/0004-flaky-demo-not-ci-isolation.md) | Contributors; reviewers | Authored | Superseding decision only | None |
 | [`adr/0005-independent-workflow-topology.md`](adr/0005-independent-workflow-topology.md) | Contributors; reviewers | Authored | Superseding decision only | None |
+| [`templates/stack-readme-template.md`](templates/stack-readme-template.md) | Anyone adding a stack | Authored | The stack-README contract changes | Annually |
+| [`templates/runbook-template.md`](templates/runbook-template.md) | Anyone writing a runbook | Authored | The runbook shape changes | Annually |
+| [`templates/waiver-template.md`](templates/waiver-template.md) | Anyone recording a waiver | Authored | The waiver fields change | Annually |
 | [`../stacks/java-selenium-testng/README.md`](../stacks/java-selenium-testng/README.md) | Java Selenium/TestNG track | Authored | Runtime, dependency, command, project, or report change | Every 6 months |
 | [`../stacks/ts-playwright/README.md`](../stacks/ts-playwright/README.md) | TypeScript Playwright track | Authored | Runtime, dependency, command, project, or report change | Every 6 months |
 | [`../stacks/python-playwright/README.md`](../stacks/python-playwright/README.md) | Python Playwright track | Authored | Runtime, dependency, command, project, or report change | Every 6 months |
