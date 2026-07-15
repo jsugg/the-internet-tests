@@ -53,3 +53,10 @@ Use the shared scenario catalog as the interview spine: identify the behavior, n
 - Marking flaky tests as normal smoke tests.
 - Hiding setup failures behind broad exception handling.
 - Changing the catalog without adding or removing matching test IDs.
+
+## Related documentation
+
+- [Documentation index](README.md) — every document, and which source wins on conflict.
+- [Scenario coverage matrix](scenario-matrix.md) — which scenarios each stack implements.
+- [Framework comparison](framework-comparison.md) — the tradeoffs to argue when asked to choose a stack.
+- [Learning paths](learning-paths.md) — where to go next, by audience.
