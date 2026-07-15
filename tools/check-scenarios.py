@@ -13,6 +13,16 @@ MATRIX = Path("docs/scenario-matrix.md")
 README = Path("README.md")
 STACKS = ("java-selenium-testng", "ts-playwright", "python-playwright")
 SCENARIO_ID = r"(?:UI|HTTP)-[A-Z0-9-]+"
+# Each stack must carry the scenario ID somewhere that means "this test is this
+# scenario", not merely somewhere in the file. Matching the ID anywhere would let
+# a mention in a comment stand in for a test.
+JAVA_PATTERNS = (rf'testName\s*=\s*"({SCENARIO_ID})"',)
+TS_PATTERNS = (rf"\btest(?:\.\w+)*\(\s*['\"`]\s*({SCENARIO_ID})\b",)
+PY_PATTERNS = (
+    rf'"""\s*({SCENARIO_ID})\b',
+    rf'@pytest\.mark\.\w+\(\s*[\'"]\s*({SCENARIO_ID})\b',
+    rf'parametrize\([^)]*[\'"]\s*({SCENARIO_ID})\b',
+)
 HEADER = "| ID | Priority | Scenario | Java | TS | Python |"
 SEPARATOR = "| --- | --- | --- | --- | --- | --- |"
 
@@ -31,17 +41,21 @@ def catalog() -> list[dict[str, object]]:
 def coverage(row: dict[str, object]) -> dict[str, str]:
     return cast(dict[str, str], row["coverage"])
 
+def ids(root: Path, glob: str, patterns: tuple[str, ...]) -> set[str]:
+    if not root.exists(): return set()
+    text = "\n".join(p.read_text() for p in root.glob(glob))
+    found: set[str] = set()
+    for pattern in patterns: found |= set(re.findall(pattern, text))
+    return found
+
 def java_ids() -> set[str]:
-    text = "\n".join(p.read_text() for p in JAVA.glob("*.java"))
-    return set(re.findall(rf'testName\s*=\s*"({SCENARIO_ID})"', text))
+    return ids(JAVA, "*.java", JAVA_PATTERNS)
 
 def ts_ids() -> set[str]:
-    text = "\n".join(p.read_text() for p in TS.glob("**/*.ts")) if TS.exists() else ""
-    return set(re.findall(rf"\b({SCENARIO_ID})\b", text))
+    return ids(TS, "**/*.ts", TS_PATTERNS)
 
 def py_ids() -> set[str]:
-    text = "\n".join(p.read_text() for p in PY.glob("**/*.py")) if PY.exists() else ""
-    return set(re.findall(rf"\b({SCENARIO_ID})\b", text))
+    return ids(PY, "**/*.py", PY_PATTERNS)
 
 def check(rows: list[dict[str, object]]) -> None:
     ids = [str(r["id"]) for r in rows]; all_ids = set(ids); java_tests = java_ids(); ts_tests = ts_ids(); py_tests = py_ids()

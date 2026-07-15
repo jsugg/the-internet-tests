@@ -114,22 +114,28 @@ stale matrix fails the pull request.
 
 ### Matching is regex-based, and that is a real caveat
 
-The checker greps; it does not parse. The two stacks are not equally strict:
+The checker greps; it does not parse. Each stack must carry the ID somewhere that
+means "this test *is* this scenario", not merely somewhere in the file:
 
-| Stack | Pattern | Consequence |
+| Stack | Where the ID must appear | Pattern |
 | --- | --- | --- |
-| Java | `testName\s*=\s*"(ID)"` | Anchored. The ID only counts inside a TestNG `testName` attribute. |
-| TypeScript, Python | `\b(ID)\b` anywhere in the file | **Unanchored.** Any occurrence counts — including one inside a comment. |
+| Java | The TestNG `testName` attribute | `testName\s*=\s*"(ID)"` |
+| TypeScript | A test title | `test(...)`, including `test.skip` and similar |
+| Python | A test docstring, a marker argument, or a `parametrize` ID | `"""(ID)`, `@pytest.mark.x("(ID)")`, `parametrize(... "(ID)")` |
 
-So in the TypeScript and Python stacks, writing `// UI-SLIDER-001 is not done
-yet` in a test file is enough to satisfy the checker that the scenario is
-covered. The reconciliation is a spelling check on intent, not proof a test
-exists or asserts anything. Python's IDs live in docstrings, which makes this
-less theoretical than it sounds: the ID is already in a comment-like position by
-design.
+Matching was originally unanchored for TypeScript and Python — any occurrence of
+the ID counted, so `// UI-SLIDER-001 is not done yet` in a test file was enough
+to satisfy the checker that the scenario was covered. It is now anchored to the
+contexts above, so a mention in a comment no longer creates coverage.
 
-Treat green as "the catalog and the test sources agree about names", not "the
-behavior is tested".
+The caveat that remains: this is still a regular expression, not a parser. A test
+whose title carries the right ID counts as covering that scenario even if its
+body asserts nothing useful, and nothing checks that the assertions match the
+scenario's stated title. Anchoring removed the accidental failure — an ID in a
+comment — but not the deliberate one.
+
+Treat green as "every catalogued scenario has a test that claims to be it", not
+"the behavior is tested".
 
 ## Tag taxonomy
 
