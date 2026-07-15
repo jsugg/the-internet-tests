@@ -195,13 +195,37 @@ shell assumptions, source references, diagrams, and generated files.
 | A durable cross-stack, CI, or catalog decision | A new ADR under `docs/adr/`. |
 | Scope, quick start, or supported stacks | [`README.md`](README.md). |
 
-## Recorded waivers
+## Waivers
+
+A waiver is a decision not to meet a requirement, written down so it stays a
+decision instead of decaying into an oversight. The difference matters: an
+undocumented gap looks identical to a mistake, and the next reader cannot tell
+whether it was considered or forgotten.
+
+To record one, copy
+[`docs/templates/waiver-template.md`](docs/templates/waiver-template.md), fill
+every field, and add it to the register below. A waiver carries the requirement,
+its scope, the reason, the owner, the approver, the revisit trigger, and a
+tracking issue.
+
+Two rules keep this from becoming a way to opt out of anything inconvenient:
+
+- **The reason must say why the requirement is wrong *here*, not that meeting it
+  is expensive.** Cost alone is a backlog item, not a waiver.
+- **The revisit trigger must be an observable event, not a date.** "First
+  sustained external contributor" is something anyone can check; "later" and
+  "Q3" are not.
+
+A waiver is not permanent, and it is not an argument. When its trigger fires, the
+requirement is back on the table.
+
+### Recorded waivers
 
 Requirements this repository deliberately does not meet, with the condition that
 would reopen each one. Both exist because this is a single-maintainer repository;
 neither is an oversight.
 
-### W-001 — `CODEOWNERS` omitted
+#### W-001 — `CODEOWNERS` omitted
 
 | Field | Value |
 | --- | --- |
@@ -213,7 +237,7 @@ neither is an oversight.
 | Revisit trigger | First sustained external contributor |
 | Tracking issue | None; repository issues are disabled, so the trigger above is the record |
 
-### W-002 — Reviewer-assignment machinery omitted
+#### W-002 — Reviewer-assignment machinery omitted
 
 | Field | Value |
 | --- | --- |
