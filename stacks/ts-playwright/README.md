@@ -11,7 +11,10 @@ Playwright coverage for the shared scenario catalog. This stack covers the TypeS
 
 ## Install
 
+Run the npm and Playwright commands in this guide from this stack directory. Docker Compose commands are the exception and run from the repository root, as each step below states.
+
 ```bash
+cd stacks/ts-playwright
 npm ci
 npx playwright install --with-deps chromium
 ```
@@ -24,7 +27,7 @@ Start the demo app from the repository root:
 docker compose -f docker/compose.yml up -d website
 ```
 
-Run the smoke scenario:
+Run the smoke scenario from this stack directory:
 
 ```bash
 THE_INTERNET_BASE_URL=http://localhost:7080 npm run test:chromium:smoke
@@ -52,7 +55,7 @@ npm run lint
 npm run format:check
 ```
 
-Stop the demo app when finished:
+Stop the demo app from the repository root when finished:
 
 ```bash
 docker compose -f docker/compose.yml down

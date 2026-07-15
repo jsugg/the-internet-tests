@@ -14,19 +14,22 @@ Selenium Manager provisions browser drivers automatically through Selenium. WebD
 
 ## Run locally
 
+Run the Maven commands in this guide from this stack directory. There is no root `pom.xml`, so `mvn test` fails from the repository root. Docker Compose commands are the exception and run from the repository root, as each step below states.
+
 Start The Internet demo app from the repository root:
 
 ```bash
 docker compose -f docker/compose.yml up -d website
 ```
 
-Run the suite:
+Run the suite from this stack directory:
 
 ```bash
+cd stacks/java-selenium-testng
 mvn test
 ```
 
-Stop the app:
+Stop the app from the repository root:
 
 ```bash
 docker compose -f docker/compose.yml down
@@ -44,9 +47,10 @@ Start the app plus local Grid from the repository root:
 docker compose -f docker/compose.yml -f docker/compose.grid.yml up -d
 ```
 
-Run against the Grid:
+Run against the Grid from this stack directory:
 
 ```bash
+cd stacks/java-selenium-testng
 mvn -P CLI_Parameters test \
   -DsuiteXmlFile=src/test/resources/regression.xml \
   -Dbrowser=remote-chrome \
@@ -59,7 +63,7 @@ mvn -P CLI_Parameters test \
   -DseleniumGridAddress=http://localhost:4444/wd/hub
 ```
 
-Stop all Compose services:
+Stop all Compose services from the repository root:
 
 ```bash
 docker compose -f docker/compose.yml -f docker/compose.grid.yml down

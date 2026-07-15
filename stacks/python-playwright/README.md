@@ -12,7 +12,13 @@ the Python P0 UI suite, selected P1 data-modeling coverage, and Chromium-only HT
 
 ## Install
 
+Run the pip, Playwright, and pytest commands in this guide from this stack
+directory, so that the virtual environment and `pyproject.toml` resolve. Docker
+Compose commands are the exception and run from the repository root, as each
+step below states.
+
 ```bash
+cd stacks/python-playwright
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
@@ -28,7 +34,7 @@ Start the demo app from the repository root:
 docker compose -f docker/compose.yml up -d website
 ```
 
-Run the smoke scenario:
+Run the smoke scenario from this stack directory:
 
 ```bash
 THE_INTERNET_BASE_URL=http://localhost:7080 pytest -m smoke --browser chromium
@@ -48,7 +54,7 @@ ruff format --check .
 mypy src tests
 ```
 
-Stop the demo app when finished:
+Stop the demo app from the repository root when finished:
 
 ```bash
 docker compose -f docker/compose.yml down
