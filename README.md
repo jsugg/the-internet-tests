@@ -137,3 +137,7 @@ CI stages report files under `artifacts/<stack>/<run-id>/<slice>/` before upload
 | TypeScript full gate | [![TypeScript](https://github.com/jsugg/the-internet-tests/actions/workflows/ts.yml/badge.svg?branch=master)](https://github.com/jsugg/the-internet-tests/actions/workflows/ts.yml?query=branch%3Amaster) |
 | Python full gate | [![Python](https://github.com/jsugg/the-internet-tests/actions/workflows/python.yml/badge.svg?branch=master)](https://github.com/jsugg/the-internet-tests/actions/workflows/python.yml?query=branch%3Amaster) |
 | Nightly matrix | [![Nightly](https://github.com/jsugg/the-internet-tests/actions/workflows/nightly.yml/badge.svg?branch=master)](https://github.com/jsugg/the-internet-tests/actions/workflows/nightly.yml?query=branch%3Amaster) |
+
+## 9. Contributing
+
+- [Contributing guide](CONTRIBUTING.md) — setup, the fast validation loop, the scenario-catalog workflow, commit and pull-request conventions, and the recorded waivers.
