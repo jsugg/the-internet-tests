@@ -66,6 +66,22 @@ jobs:
       - name: Lint Markdown
         run: git ls-files -z '*.md' | xargs -0 npx --yes markdownlint-cli2@0.23.0
 
+      - name: Check Markdown links
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          git ls-files -z '*.md' | xargs -0
+          docker run --rm
+          -v "$PWD:/repo:ro"
+          -w /repo
+          -e GITHUB_TOKEN
+          lycheeverse/lychee:0.24.2@sha256:e2d19e57cf6ab037026f20b8e449a1f30d9d7f81eef4194763aab2eab20bd28d
+          --no-progress
+          --exclude-loopback
+          --max-retries 3
+          --retry-wait-time 2
+          --timeout 20
+
   scenario-catalog:
     name: "Scenario catalog · drift check"
     runs-on: ubuntu-24.04

@@ -1,0 +1,17 @@
+# Exclusions for the link check in the repo-hygiene job of
+# .github/workflows/pr.yml. One regular expression per line.
+#
+# Only genuinely unverifiable or volatile targets belong here. Everything else,
+# including every relative link between documents, is checked strictly: a
+# broken relative link must fail the pull request.
+
+# The public demo app under test. Its availability is upstream and outside this
+# repository's control, so an outage there must never fail an unrelated pull
+# request. The pinned container image, not this host, is what CI actually runs
+# against.
+https://the-internet\.herokuapp\.com
+
+# Workflow status badges. The badge endpoint answers per request and is prone to
+# rate limiting and redirects, which would make the gate flaky. The Actions
+# links rendered beside each badge point at the same workflows and are checked.
+https://github\.com/jsugg/the-internet-tests/actions/workflows/[^/]+/badge\.svg
