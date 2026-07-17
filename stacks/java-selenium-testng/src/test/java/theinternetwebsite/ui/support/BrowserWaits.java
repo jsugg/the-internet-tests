@@ -1,20 +1,21 @@
 package theinternetwebsite.ui.support;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 import java.time.Duration;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public final class BrowserWaits {
     private static final By PAGE_FOOTER = By.xpath("//*[@id='page-footer']");
-    private final RemoteWebDriver driver;
+    private final WebDriver driver;
 
-    public BrowserWaits(@NotNull RemoteWebDriver driver) {
+    public BrowserWaits(@NotNull WebDriver driver) {
         this.driver = driver;
     }
 
@@ -40,6 +41,6 @@ public final class BrowserWaits {
     }
 
     public void waitForPageFactoryElements(@NotNull WebElement pageTitle) {
-        waitFor(Duration.ofSeconds(10)).until(ExpectedConditions.and(visibilityOf(pageTitle), visibilityOf(pageFooter())));
+        waitFor(Duration.ofSeconds(10)).until(ExpectedConditions.and(visibilityOf(pageTitle), visibilityOfElementLocated(PAGE_FOOTER)));
     }
 }
