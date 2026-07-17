@@ -8,6 +8,11 @@
     <parameter name="seleniumGridUrl" value="${theInternetWebsite.seleniumGridUrl}"/>
     <parameter name="baseUrlSG" value="${theInternetWebsite.baseUrlSG}"/>
     <parameter name="baseUrl" value="${theInternetWebsite.baseUrl}"/>
+    <test name="BrowserWaitsTest">
+        <classes>
+            <class name="theinternetwebsite.ui.support.BrowserWaitsTest"/>
+        </classes>
+    </test>
     <test name = "Login Tests - Success">
         <parameter name="username" value="tomsmith"/>
         <parameter name="password" value="SuperSecretPassword!"/>
