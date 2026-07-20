@@ -69,7 +69,7 @@ jobs:
 
       - name: Upload Surefire XML
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-nightly-${{ matrix.browser }}-${{ github.run_id }}-surefire-xml
           path: artifacts/java/${{ github.run_id }}/nightly-${{ matrix.browser }}/
@@ -174,7 +174,7 @@ jobs:
 
       - name: Upload Java Grid Surefire XML
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-${{ matrix.artifact_slice }}-${{ github.run_id }}-surefire-xml
           path: artifacts/java/${{ github.run_id }}/${{ matrix.artifact_slice }}/
@@ -283,7 +283,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ts-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
           path: artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/
@@ -437,7 +437,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: py-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
           path: artifacts/py/${{ github.run_id }}/${{ matrix.artifact_slice }}/
