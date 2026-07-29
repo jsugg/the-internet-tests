@@ -68,18 +68,15 @@ jobs:
             marker_expr: mobile_emulation and not desktop and not not_ci and not flaky_demo
             artifact_slice: mobile-safari
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Start test application
+        run: python3 tools/ci_containers.py start-website
+
       - name: Set up Python 3.14
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.14'
           cache: pip
@@ -143,7 +140,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: py-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
           path: artifacts/py/${{ github.run_id }}/${{ matrix.artifact_slice }}/

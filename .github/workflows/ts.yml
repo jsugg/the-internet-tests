@@ -63,18 +63,15 @@ jobs:
             grep-invert: '@desktop|@not-ci|@flaky-demo'
             artifact_slice: mobile-safari
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Start test application
+        run: python3 tools/ci_containers.py start-website
+
       - name: Set up Node 22
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -130,7 +127,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ts-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
           path: artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/

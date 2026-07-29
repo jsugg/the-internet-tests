@@ -22,21 +22,22 @@ jobs:
 
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         browser:
           - chrome
           - edge
           - firefox
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Start test application
+        run: >-
+          python3 tools/ci_containers.py
+          --initial-jitter-seconds 20
+          start-website
 
       - name: Set up JDK 25
         uses: actions/setup-java@v5
@@ -69,7 +70,7 @@ jobs:
 
       - name: Upload Surefire XML
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-nightly-${{ matrix.browser }}-${{ github.run_id }}-surefire-xml
           path: artifacts/java/${{ github.run_id }}/nightly-${{ matrix.browser }}/
@@ -82,6 +83,7 @@ jobs:
 
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         include:
           - browser: chrome
@@ -94,30 +96,16 @@ jobs:
             grid_node_image: selenium/node-firefox:4.45.0-20260606@sha256:d2ea8f4fa9c3178f9842fd16c51626cb934b303833ca70d9e3ce4aa5c539baf7
             artifact_slice: grid-firefox
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-      selenium-hub:
-        image: selenium/hub:4.45.0-20260606@sha256:684d163880d558f217b29d24e992c5a52e0b130381ab7e1f79e9bad0414f753b
-        ports:
-          - 4442:4442
-          - 4443:4443
-          - 4444:4444
-      browser-node:
-        image: ${{ matrix.grid_node_image }}
-        options: --shm-size=2g
-        env:
-          SE_EVENT_BUS_HOST: selenium-hub
-          SE_EVENT_BUS_PUBLISH_PORT: 4442
-          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-          SE_NODE_ENABLE_MANAGED_DOWNLOADS: "true"
-          SE_NODE_MAX_SESSIONS: "1"
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Start test application and Selenium Grid
+        run: >-
+          python3 tools/ci_containers.py
+          --initial-jitter-seconds 20
+          start-grid
+          --node-image '${{ matrix.grid_node_image }}'
 
       - name: Set up JDK 25
         uses: actions/setup-java@v5
@@ -125,30 +113,6 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
-
-      - name: Wait for Selenium Grid
-        run: |
-          python3 - <<'PY'
-          import json
-          import time
-          import urllib.request
-
-          deadline = time.monotonic() + 90
-          last_error = ""
-          while time.monotonic() < deadline:
-              try:
-                  with urllib.request.urlopen("http://localhost:4444/status", timeout=5) as response:
-                      payload = json.load(response)
-                  value = payload.get("value", {})
-                  if value.get("ready") is True:
-                      print(json.dumps(value, sort_keys=True))
-                      raise SystemExit(0)
-                  last_error = json.dumps(value, sort_keys=True)
-              except Exception as exc:
-                  last_error = str(exc)
-              time.sleep(3)
-          raise SystemExit(f"Selenium Grid was not ready: {last_error}")
-          PY
 
       - name: Run Java Selenium Grid nightly regression
         run: >-
@@ -174,7 +138,7 @@ jobs:
 
       - name: Upload Java Grid Surefire XML
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-${{ matrix.artifact_slice }}-${{ github.run_id }}-surefire-xml
           path: artifacts/java/${{ github.run_id }}/${{ matrix.artifact_slice }}/
@@ -187,6 +151,7 @@ jobs:
 
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         include:
           - project: chromium
@@ -218,18 +183,18 @@ jobs:
             grep-invert: "@desktop|@http|@not-ci"
             artifact_slice: nightly-mobile-safari
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Start test application
+        run: >-
+          python3 tools/ci_containers.py
+          --initial-jitter-seconds 20
+          start-website
+
       - name: Set up Node 22
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -283,7 +248,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ts-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
           path: artifacts/ts/${{ github.run_id }}/${{ matrix.artifact_slice }}/
@@ -296,6 +261,7 @@ jobs:
 
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         include:
           - project: chromium
@@ -348,18 +314,18 @@ jobs:
             marker_expr: not desktop and not http and not not_ci
             artifact_slice: nightly-mobile-safari
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Start test application
+        run: >-
+          python3 tools/ci_containers.py
+          --initial-jitter-seconds 20
+          start-website
+
       - name: Set up Python 3.14
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.14'
           cache: pip
@@ -437,7 +403,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: py-${{ matrix.artifact_slice }}-${{ github.run_id }}-playwright
           path: artifacts/py/${{ github.run_id }}/${{ matrix.artifact_slice }}/

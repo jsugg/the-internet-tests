@@ -4,7 +4,7 @@ Use this guide to understand what runs in CI, when, and why: the trigger fan-out
 
 ## The one rule that shapes everything
 
-There is no `needs:`, `workflow_run:`, `workflow_call:`, or `concurrency:` anywhere in the five workflows, so nothing chains, orders, or cancels anything else. Every trigger fans out to its matching workflows in parallel, and inside each workflow every job runs in parallel with the others. The only sequential execution is the ordered list of steps inside a single job. Read the step lists below top to bottom for order within a job, and treat everything else as concurrent.
+There is no `needs:`, `workflow_run:`, `workflow_call:`, or `concurrency:` anywhere in the five workflows, so nothing chains, orders, or cancels anything else. Every trigger fans out to its matching workflows in parallel, and inside each workflow every top-level job runs in parallel with the others. Matrix legs are also concurrent, subject to the nightly limit of three legs per matrix. The only sequential execution is the ordered list of steps inside a single job. Read the step lists below top to bottom for order within a job, and treat everything else as concurrent.
 
 ## Trigger fan-out
 
@@ -61,18 +61,18 @@ Steps run top to bottom within each job. A step marked (always) carries `if: alw
 
 | Job (`id`) | Intent | Steps (top to bottom) | File |
 | --- | --- | --- | --- |
-| `repo-hygiene` | Lint workflows, commit messages, and Markdown, check documentation links, validate the README fast start, and require CI-guide updates alongside workflow changes | 1. Checkout repository, 2. Set up Node 22, 3. Lint GitHub Actions workflows, 4. Lint pull request commits (conditional), 5. Lint latest commit (conditional), 6. Lint Markdown, 7. Check Markdown links, 8. Validate README fast start, 9. Require CI guide updates with workflow changes (conditional) | [`pr.yml`](../.github/workflows/pr.yml) |
+| `repo-hygiene` | Lint workflows, commit messages, and Markdown, check documentation links, validate the README fast start, and require CI-guide updates alongside workflow changes | 1. Checkout repository, 2. Test CI container helper, 3. Pull CI utility images, 4. Set up Node 22, 5. Lint GitHub Actions workflows, 6. Lint pull request commits (conditional), 7. Lint latest commit (conditional), 8. Lint Markdown, 9. Check Markdown links, 10. Validate README fast start, 11. Require CI guide updates with workflow changes (conditional) | [`pr.yml`](../.github/workflows/pr.yml) |
 | `scenario-catalog` | Fail if the generated scenario matrix or the README embed of it has drifted | 1. Checkout repository, 2. Check scenario catalog | [`pr.yml`](../.github/workflows/pr.yml) |
-| `java-smoke` | Compile the Java tests and run the Chrome smoke suite | 1. Checkout repository, 2. Set up JDK 25, 3. Compile Java tests, 4. Run Java smoke, 5. Stage Java reports (always), 6. Upload Surefire XML (always) | [`pr.yml`](../.github/workflows/pr.yml) |
-| `ts-smoke` | Type-check, lint, and format-check, then run the Chromium smoke suite | 1. Checkout repository, 2. Set up Node 22, 3. Install TypeScript stack dependencies, 4. Type-check TypeScript stack, 5. Lint TypeScript stack, 6. Check TypeScript stack formatting, 7. Install Chromium browser, 8. Run TypeScript Chromium smoke, 9. Upload Playwright artifacts (always) | [`pr.yml`](../.github/workflows/pr.yml) |
-| `py-smoke` | Lint, format-check, and type-check, then run the Chromium smoke suite | 1. Checkout repository, 2. Set up Python 3.14, 3. Install Python stack dependencies, 4. Lint Python stack, 5. Check Python stack formatting, 6. Type-check Python stack, 7. Install Chromium browser, 8. Run Python Chromium smoke, 9. Upload Playwright artifacts (always) | [`pr.yml`](../.github/workflows/pr.yml) |
-| `java-regression` | Run the Java regression suite per matrix browser | 1. Checkout repository, 2. Set up JDK 25, 3. Run Java regression, 4. Stage Java reports (always), 5. Upload Surefire XML (always) | [`java.yml`](../.github/workflows/java.yml) |
-| `python-regression` | Plan and run each Python Playwright slice per matrix project | 1. Checkout repository, 2. Set up Python 3.14, 3. Install Python stack dependencies, 4. Plan Python Playwright slice, 5. Install Playwright browser (conditional), 6. Run Python Playwright slice (conditional), 7. Upload Playwright artifacts (always) | [`python.yml`](../.github/workflows/python.yml) |
-| `typescript-regression` | Plan and run each TypeScript Playwright slice per matrix project | 1. Checkout repository, 2. Set up Node 22, 3. Install TypeScript stack dependencies, 4. Plan TypeScript Playwright slice, 5. Install Playwright browsers (conditional), 6. Run TypeScript Playwright slice (conditional), 7. Upload Playwright artifacts (always) | [`ts.yml`](../.github/workflows/ts.yml) |
-| `java-nightly-local` | Run the Java regression suite with a local driver per matrix browser | 1. Checkout repository, 2. Set up JDK 25, 3. Run Java nightly regression, 4. Stage Java reports (always), 5. Upload Surefire XML (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
-| `java-nightly-grid` | Run the Java regression suite against Selenium Grid per matrix browser | 1. Checkout repository, 2. Set up JDK 25, 3. Wait for Selenium Grid, 4. Run Java Selenium Grid nightly regression, 5. Stage Java Grid reports (always), 6. Upload Java Grid Surefire XML (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
-| `typescript-nightly` | Plan and run each TypeScript nightly slice per matrix project | 1. Checkout repository, 2. Set up Node 22, 3. Install TypeScript stack dependencies, 4. Plan TypeScript nightly slice, 5. Install Playwright browser (conditional), 6. Run TypeScript nightly slice (conditional), 7. Upload Playwright artifacts (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
-| `python-nightly` | Plan and run each Python nightly slice per matrix project | 1. Checkout repository, 2. Set up Python 3.14, 3. Install Python stack dependencies, 4. Plan Python nightly slice, 5. Install Playwright browser (conditional), 6. Run Python nightly slice (conditional), 7. Upload Playwright artifacts (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
+| `java-smoke` | Compile the Java tests and run the Chrome smoke suite | 1. Checkout repository, 2. Start test application, 3. Set up JDK 25, 4. Compile Java tests, 5. Run Java smoke, 6. Stage Java reports (always), 7. Upload Surefire XML (always) | [`pr.yml`](../.github/workflows/pr.yml) |
+| `ts-smoke` | Type-check, lint, and format-check, then run the Chromium smoke suite | 1. Checkout repository, 2. Start test application, 3. Set up Node 22, 4. Install TypeScript stack dependencies, 5. Type-check TypeScript stack, 6. Lint TypeScript stack, 7. Check TypeScript stack formatting, 8. Install Chromium browser, 9. Run TypeScript Chromium smoke, 10. Upload Playwright artifacts (always) | [`pr.yml`](../.github/workflows/pr.yml) |
+| `py-smoke` | Lint, format-check, and type-check, then run the Chromium smoke suite | 1. Checkout repository, 2. Start test application, 3. Set up Python 3.14, 4. Install Python stack dependencies, 5. Lint Python stack, 6. Check Python stack formatting, 7. Type-check Python stack, 8. Install Chromium browser, 9. Run Python Chromium smoke, 10. Upload Playwright artifacts (always) | [`pr.yml`](../.github/workflows/pr.yml) |
+| `java-regression` | Run the Java regression suite per matrix browser | 1. Checkout repository, 2. Start test application, 3. Set up JDK 25, 4. Run Java regression, 5. Stage Java reports (always), 6. Upload Surefire XML (always) | [`java.yml`](../.github/workflows/java.yml) |
+| `python-regression` | Plan and run each Python Playwright slice per matrix project | 1. Checkout repository, 2. Start test application, 3. Set up Python 3.14, 4. Install Python stack dependencies, 5. Plan Python Playwright slice, 6. Install Playwright browser (conditional), 7. Run Python Playwright slice (conditional), 8. Upload Playwright artifacts (always) | [`python.yml`](../.github/workflows/python.yml) |
+| `typescript-regression` | Plan and run each TypeScript Playwright slice per matrix project | 1. Checkout repository, 2. Start test application, 3. Set up Node 22, 4. Install TypeScript stack dependencies, 5. Plan TypeScript Playwright slice, 6. Install Playwright browsers (conditional), 7. Run TypeScript Playwright slice (conditional), 8. Upload Playwright artifacts (always) | [`ts.yml`](../.github/workflows/ts.yml) |
+| `java-nightly-local` | Run the Java regression suite with a local driver per matrix browser | 1. Checkout repository, 2. Start test application, 3. Set up JDK 25, 4. Run Java nightly regression, 5. Stage Java reports (always), 6. Upload Surefire XML (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
+| `java-nightly-grid` | Run the Java regression suite against Selenium Grid per matrix browser | 1. Checkout repository, 2. Start test application and Selenium Grid, 3. Set up JDK 25, 4. Run Java Selenium Grid nightly regression, 5. Stage Java Grid reports (always), 6. Upload Java Grid Surefire XML (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
+| `typescript-nightly` | Plan and run each TypeScript nightly slice per matrix project | 1. Checkout repository, 2. Start test application, 3. Set up Node 22, 4. Install TypeScript stack dependencies, 5. Plan TypeScript nightly slice, 6. Install Playwright browser (conditional), 7. Run TypeScript nightly slice (conditional), 8. Upload Playwright artifacts (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
+| `python-nightly` | Plan and run each Python nightly slice per matrix project | 1. Checkout repository, 2. Start test application, 3. Set up Python 3.14, 4. Install Python stack dependencies, 5. Plan Python nightly slice, 6. Install Playwright browser (conditional), 7. Run Python nightly slice (conditional), 8. Upload Playwright artifacts (always) | [`nightly.yml`](../.github/workflows/nightly.yml) |
 
 This guide is the one document CI checks against its own source. A pull request
 that changes anything under `.github/workflows/` without touching this file fails
@@ -80,11 +80,28 @@ that changes anything under `.github/workflows/` without touching this file fail
 risk documentation in the repository: it stays plausible long after it stops
 being true. If a workflow change genuinely has no semantic effect here — a
 whitespace or comment edit — put the literal token `[ci-guide-exempt]` in the
-pull request title to skip the check.
+pull request title to skip the check. Dependabot GitHub Actions updates are also
+exempt because that ecosystem can only replace action-version references; it
+cannot change the documented job topology.
+
+## Resilient container bootstrap
+
+CI starts its pinned Docker images from an explicit **Start test application**
+step instead of the job-level `services` phase. The helper at
+[`tools/ci_containers.py`](../tools/ci_containers.py) bounds each pull, retries
+only that idempotent external operation with exponential backoff and jitter,
+starts containers with `--pull=never`, and polls application/Grid readiness
+before language setup or tests begin. Exhausted retries include container
+status and logs. Tests themselves are never retried.
+
+The 20 nightly matrix legs make 26 image-pull calls in total, so each leg starts
+with a randomized delay of at most 20 seconds and each matrix runs at most three
+legs concurrently. This reduces synchronized Docker Hub bursts without reducing
+browser coverage.
 
 ## Matrix and tags
 
-Each regression and nightly job fans out over a `strategy.matrix`, with `fail-fast` disabled so one failing leg never cancels the rest.
+Each regression and nightly job fans out over a `strategy.matrix`, with `fail-fast` disabled so one failing leg never cancels the rest. Nightly matrices cap parallelism at three legs to avoid synchronized external-registry bursts.
 
 | Stack | Regression projects | Nightly projects |
 | --- | --- | --- |

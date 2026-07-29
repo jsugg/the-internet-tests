@@ -35,15 +35,12 @@ jobs:
           - chrome
           - firefox
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Start test application
+        run: python3 tools/ci_containers.py start-website
 
       - name: Set up JDK 25
         uses: actions/setup-java@v5
@@ -76,7 +73,7 @@ jobs:
 
       - name: Upload Surefire XML
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-${{ matrix.browser }}-${{ github.run_id }}-surefire-xml
           path: artifacts/java/${{ github.run_id }}/${{ matrix.browser }}/
