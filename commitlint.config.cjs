@@ -8,7 +8,7 @@ module.exports = {
     'scope-enum': [
       2,
       'always',
-      ['java', 'ts', 'py', 'catalog', 'docker', 'actions', 'deps', 'readme'],
+      ['java', 'ts', 'py', 'catalog', 'docker', 'actions', 'deps', 'deps-dev', 'readme'],
     ],
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],

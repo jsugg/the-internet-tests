@@ -24,14 +24,23 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Test CI container helper
+        run: python3 -m unittest discover -s tools/tests -v
+
+      - name: Pull CI utility images
+        run: >-
+          python3 tools/ci_containers.py pull
+          rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+          lycheeverse/lychee:0.24.2@sha256:e2d19e57cf6ab037026f20b8e449a1f30d9d7f81eef4194763aab2eab20bd28d
+
       - name: Set up Node 22
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
       - name: Lint GitHub Actions workflows
         run: >-
-          docker run --rm
+          docker run --rm --pull=never
           -v "$PWD:/repo:ro"
           -w /repo
           rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
@@ -71,7 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
           git ls-files -z '*.md' | xargs -0
-          docker run --rm
+          docker run --rm --pull=never
           -v "$PWD:/repo:ro"
           -w /repo
           -e GITHUB_TOKEN
@@ -90,12 +99,17 @@ jobs:
           github.event_name == 'pull_request' &&
           !contains(github.event.pull_request.title, '[ci-guide-exempt]')
         env:
+          ACTOR: ${{ github.actor }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           changed="$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA")"
           if printf '%s\n' "$changed" | grep -q '^\.github/workflows/' &&
              ! printf '%s\n' "$changed" | grep -qx 'docs/ci-workflows.md'; then
+            if [ "$ACTOR" = "dependabot[bot]" ]; then
+              echo "Dependabot action-version updates do not change the documented job topology."
+              exit 0
+            fi
             echo "::error file=docs/ci-workflows.md::This pull request changes .github/workflows/ but not docs/ci-workflows.md"
             echo "docs/ci-workflows.md mirrors the workflows at job and step granularity, and nothing else keeps it honest."
             echo "Update it in this pull request. If the change has no semantic effect on the guide, add [ci-guide-exempt] to the pull request title."
@@ -122,15 +136,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Start test application
+        run: python3 tools/ci_containers.py start-website
 
       - name: Set up JDK 25
         uses: actions/setup-java@v5
@@ -166,7 +177,7 @@ jobs:
 
       - name: Upload Surefire XML
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: java-smoke-${{ github.run_id }}-surefire-xml
           path: artifacts/java/${{ github.run_id }}/smoke/
@@ -177,18 +188,15 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Start test application
+        run: python3 tools/ci_containers.py start-website
+
       - name: Set up Node 22
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -224,7 +232,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ts-smoke-${{ github.run_id }}-playwright
           path: artifacts/ts/${{ github.run_id }}/smoke/
@@ -235,18 +243,15 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
 
-    services:
-      website:
-        image: gprestes/the-internet:v2.6.5@sha256:205b8fc712747ea5fa1a0d54b01fa02d65e3f67a448c7a5c2aba65b211def171
-        ports:
-          - 7080:5000
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Start test application
+        run: python3 tools/ci_containers.py start-website
+
       - name: Set up Python 3.14
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.14'
           cache: pip
@@ -290,7 +295,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: py-smoke-${{ github.run_id }}-playwright
           path: artifacts/py/${{ github.run_id }}/smoke/

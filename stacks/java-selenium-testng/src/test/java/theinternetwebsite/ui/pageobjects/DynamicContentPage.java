@@ -36,7 +36,7 @@ public class DynamicContentPage extends BasePage {
 
     public HashMap<String, String> getContent(@NotNull Boolean partial) {
         String staticContentQueryString = "?with_content=static";
-        driver().get(Boolean.TRUE.equals(partial) ? pageUrl() + staticContentQueryString : pageUrl());
+        navigateTo(Boolean.TRUE.equals(partial) ? pageUrl() + staticContentQueryString : pageUrl());
         waitUntilOpen();
 
         List<WebElement> rawImages = driver().findElements(By.xpath("(//*[@class='large-2 columns'])"));

@@ -13,6 +13,16 @@
             <class name="theinternetwebsite.ui.support.BrowserWaitsTest"/>
         </classes>
     </test>
+    <test name="BrowserActionsTest">
+        <classes>
+            <class name="theinternetwebsite.ui.support.BrowserActionsTest"/>
+        </classes>
+    </test>
+    <test name="DriverFactoryTest">
+        <classes>
+            <class name="theinternetwebsite.ui.driver.DriverFactoryTest"/>
+        </classes>
+    </test>
     <test name = "Login Tests - Success">
         <parameter name="username" value="tomsmith"/>
         <parameter name="password" value="SuperSecretPassword!"/>

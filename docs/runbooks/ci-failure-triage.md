@@ -4,8 +4,10 @@ A check went red. This is how to find out why without reading the whole workflow
 file, and how to reproduce it locally so you are debugging your change rather
 than the Actions UI.
 
-Rule zero: **never fix a red gate by weakening it.** Widening a tag, adding a
-retry, or relaxing a lint to get green converts a defect into a permanent lie.
+Rule zero: **never fix a red gate by weakening it.** Widening a tag, retrying a
+test, or relaxing a lint to get green converts a defect into a permanent lie.
+Bounded retries are reserved for idempotent external setup operations such as
+pulling a digest-pinned image; they do not change test outcomes.
 If a failure is genuinely not your change, say so in the pull request and fix the
 cause.
 
@@ -164,6 +166,10 @@ mvn -B -f stacks/java-selenium-testng/pom.xml -P CLI_Parameters clean test \
 Selenium Grid. Compare them before anything else, because the pair localizes the
 fault for free:
 
+- **Start test application/Grid fails** — inspect the pull warnings and the
+  grouped container diagnostics. Checkout and tests have not run, so classify
+  an exhausted registry timeout as external infrastructure rather than a test
+  failure.
 - **Grid fails, local passes** — the fault is in the Grid path: session
   capabilities, the node image, or a client/node version mismatch. It is not your
   test logic.

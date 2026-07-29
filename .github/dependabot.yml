@@ -4,11 +4,20 @@ updates:
     directory: /stacks/java-selenium-testng
     schedule:
       interval: weekly
+    commit-message:
+      prefix: build
+      include: scope
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    commit-message:
+      prefix: build
+      include: scope
   - package-ecosystem: pip
     directory: /stacks/python-playwright
     schedule:
       interval: weekly
+    commit-message:
+      prefix: build
+      include: scope
