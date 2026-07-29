@@ -7,6 +7,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import theinternetwebsite.ui.UITest;
+import theinternetwebsite.ui.support.BrowserActions;
 
 abstract class BasePage {
     private final UITest caller;
@@ -19,7 +20,7 @@ abstract class BasePage {
     }
 
     public void open() {
-        driver().get(pageUrl);
+        navigateTo(pageUrl);
         waitUntilOpen();
     }
 
@@ -39,6 +40,10 @@ abstract class BasePage {
 
     protected final @NotNull String pageUrl() {
         return pageUrl;
+    }
+
+    protected final void navigateTo(@NotNull String url) {
+        BrowserActions.navigateTo(driver(), url);
     }
 
     protected final @NotNull WebDriverWait waitFor(@NotNull Duration timeout) {

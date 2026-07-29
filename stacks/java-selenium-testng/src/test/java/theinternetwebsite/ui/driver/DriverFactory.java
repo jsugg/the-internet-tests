@@ -5,10 +5,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -21,6 +23,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public final class DriverFactory {
     public static final String DOWNLOADS_FOLDER = Paths.get("target/").toAbsolutePath().toString();
+    static final Duration PAGE_LOAD_TIMEOUT = Duration.ofSeconds(30);
 
     public @NotNull RemoteWebDriver create(@NotNull TestRunConfig config) {
         return switch (config.browser()) {
@@ -34,7 +37,7 @@ public final class DriverFactory {
     private @NotNull RemoteWebDriver createChromeDriver(@NotNull TestRunConfig config) {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setExperimentalOption("prefs", chromePreferences());
-        chromeOptions.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+        configureNavigation(chromeOptions);
         chromeOptions.addArguments("--window-size=1920,1200");
         if (!config.useSeleniumGrid()) {
             // Ubuntu 24.04 CI runners restrict unprivileged user namespaces (AppArmor),
@@ -59,6 +62,7 @@ public final class DriverFactory {
         firefoxOptions.addPreference("browser.download.folderList", 2);
         firefoxOptions.addPreference("browser.download.dir", DOWNLOADS_FOLDER);
         firefoxOptions.addPreference("browser.helperApps.neverAsk.saveToDisk", "text/plain,application/octet-stream");
+        configureNavigation(firefoxOptions);
         if (config.headless() && !config.useSeleniumGrid()) {
             firefoxOptions.addArguments("-headless");
         }
@@ -74,11 +78,10 @@ public final class DriverFactory {
     private @NotNull RemoteWebDriver createEdgeDriver(@NotNull TestRunConfig config) {
         EdgeOptions edgeOptions = new EdgeOptions();
         edgeOptions.setExperimentalOption("prefs", chromePreferences());
+        configureNavigation(edgeOptions);
         edgeOptions.addArguments("--window-size=1920,1200");
         if (!config.useSeleniumGrid()) {
-            // Ubuntu 24.04 CI runners restrict unprivileged user namespaces (AppArmor),
-            // which crashes the Chromium sandbox on launch; disable it for local runs.
-            edgeOptions.addArguments("--no-sandbox", "--disable-dev-shm-usage");
+            configureLocalEdge(edgeOptions);
         }
         if (config.headless() && !config.useSeleniumGrid()) {
             edgeOptions.addArguments("--headless=new");
@@ -90,6 +93,18 @@ public final class DriverFactory {
             return remoteDriver(config, edgeOptions);
         }
         return new EdgeDriver(edgeOptions);
+    }
+
+    /** Applies launch hardening required by ephemeral Linux Edge profiles. */
+    static void configureLocalEdge(@NotNull EdgeOptions edgeOptions) {
+        // Ubuntu 24.04 restricts Chromium's sandbox; fresh Edge profiles can present first-run UI.
+        edgeOptions.addArguments("--no-first-run", "--no-sandbox", "--disable-dev-shm-usage");
+    }
+
+    /** Bounds navigation and lets page-object waits own application readiness. */
+    static void configureNavigation(@NotNull MutableCapabilities options) {
+        options.setCapability("pageLoadStrategy", PageLoadStrategy.EAGER.toString());
+        options.setCapability("timeouts", Map.of("pageLoad", PAGE_LOAD_TIMEOUT.toMillis()));
     }
 
     private static void applyBrowserVersion(@NotNull ChromeOptions options, @NotNull TestRunConfig config) {

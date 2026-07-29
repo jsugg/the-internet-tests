@@ -8,6 +8,16 @@
     <parameter name="seleniumGridUrl" value="${theInternetWebsite.seleniumGridUrl}"/>
     <parameter name="baseUrlSG" value="${theInternetWebsite.baseUrlSG}"/>
     <parameter name="baseUrl" value="${theInternetWebsite.baseUrl}"/>
+    <test name="DriverFactoryTest">
+        <classes>
+            <class name="theinternetwebsite.ui.driver.DriverFactoryTest"/>
+        </classes>
+    </test>
+    <test name="BrowserActionsTest">
+        <classes>
+            <class name="theinternetwebsite.ui.support.BrowserActionsTest"/>
+        </classes>
+    </test>
     <test name="Login smoke">
         <parameter name="username" value="tomsmith"/>
         <parameter name="password" value="SuperSecretPassword!"/>

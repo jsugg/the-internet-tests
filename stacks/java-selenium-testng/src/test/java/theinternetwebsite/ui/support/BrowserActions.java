@@ -2,11 +2,57 @@ package theinternetwebsite.ui.support;
 
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class BrowserActions {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrowserActions.class);
+    private static final int MAX_NAVIGATION_ATTEMPTS = 2;
+
     private BrowserActions() {}
+
+    /** Opens a URL with one bounded retry for an idempotent timed-out navigation. */
+    public static void navigateTo(@NotNull WebDriver driver, @NotNull String url) {
+        TimeoutException firstFailure = null;
+        for (int attempt = 1; attempt <= MAX_NAVIGATION_ATTEMPTS; attempt++) {
+            try {
+                driver.get(url);
+                return;
+            } catch (TimeoutException timeout) {
+                if (hasReachedTarget(driver, url, timeout)) {
+                    LOGGER.warn("Navigation timed out after reaching {}; continuing with page readiness checks", url);
+                    return;
+                }
+                if (attempt == MAX_NAVIGATION_ATTEMPTS) {
+                    TimeoutException failure = new TimeoutException(
+                            "Navigation to " + url + " timed out after " + MAX_NAVIGATION_ATTEMPTS + " attempts",
+                            timeout);
+                    if (firstFailure != null) {
+                        failure.addSuppressed(firstFailure);
+                    }
+                    throw failure;
+                }
+                firstFailure = timeout;
+                LOGGER.warn("Navigation attempt {} of {} timed out for {}; retrying",
+                        attempt, MAX_NAVIGATION_ATTEMPTS, url);
+            }
+        }
+    }
+
+    private static boolean hasReachedTarget(
+            @NotNull WebDriver driver, @NotNull String url, @NotNull TimeoutException timeout) {
+        try {
+            return url.equals(driver.getCurrentUrl());
+        } catch (WebDriverException currentUrlFailure) {
+            timeout.addSuppressed(currentUrlFailure);
+            return false;
+        }
+    }
 
     public static void reloadPage(@NotNull RemoteWebDriver driver) {
         driver.navigate().refresh();
